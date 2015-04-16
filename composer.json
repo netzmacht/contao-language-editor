@@ -1,0 +1,52 @@
+{
+    "name":"netzmacht/contao-language-editor",
+    "description":"Contao Leaflet maps integration",
+    "keywords":["contao", "maps", "leaflet"],
+    "type":"contao-module",
+    "license":"LGPL-3.0+",
+    "authors":[
+        {
+            "name":"David Molineus",
+            "email":"mail@netzmacht.de",
+            "homepage":"http://www.netzmacht.de",
+            "role":"Developer"
+        },
+      {
+        "name":"Tristan Lins",
+        "email":"mail@netzmacht.de",
+        "homepage":"http://tristan.lins.io",
+        "role":"Developer"
+      }
+    ],
+    "support":{
+        "email":"mail@netzmacht.de",
+        "issues":"https://github.com/netzmacht/contao-leaflet-maps/issues",
+        "source":"https://github.com/netzmacht/contao-leaflet-maps"
+    },
+    "require":{
+        "php":">=5.4",
+        "contao/core":">=3.2,<3.6-dev",
+        "contao-community-alliance/meta-palettes": "~1.5",
+        "menatwork/contao-multicolumnwizard": "~3.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Netzmacht\\Contao\\LanguageEditor": "src/"
+        }
+    },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "prefer-stable": true,
+    "minimum-stability": "dev",
+    "extra":{
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        },
+        "contao": {
+            "sources":{
+                "module": "system/modules/language-editor",
+            }
+        }
+    }
+}
