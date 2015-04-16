@@ -61,7 +61,7 @@
 					<h3>
 						<label for="ctrl_language"><?php echo $GLOBALS['TL_LANG']['tl_translation']['language'][0]; ?></label>
 					</h3>
-					<select id="ctrl_language" name="language">
+					<select id="ctrl_language" name="language" class="tl_select">
 						<?php foreach ($this->getLanguages() as $k=>$v): ?>
 						<option value="<?php echo $k; ?>"<?php if ($_SESSION['tl_translation_search_language'] == $k): ?> selected="selected"<?php endif; ?>><?php echo $v; ?></option>
 						<?php endforeach; ?>
@@ -72,7 +72,7 @@
 					<h3>
 						<label for="ctrl_translation"><?php echo $GLOBALS['TL_LANG']['tl_translation']['langgroup'][0]; ?></label>
 					</h3>
-					<select id="ctrl_translation" name="translation">
+					<select id="ctrl_translation" name="translation" class="tl_select">
                         			<option value="">-</option>
                         			<?php foreach ($this->translations as $translation): ?>
 						<option value="<?php echo $translation; ?>"<?php if ($_SESSION['tl_translation_search_translation'] == $translation): ?> selected="selected"<?php endif; ?>><?php echo $translation; ?></option>
