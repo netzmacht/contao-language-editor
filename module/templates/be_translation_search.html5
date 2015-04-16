@@ -21,7 +21,7 @@
 			<input type="hidden" name="language" value="<?php echo specialchars($_SESSION['tl_translation_search_language']); ?>">
 			<input type="hidden" name="translation" value="<?php echo specialchars($_SESSION['tl_translation_search_translation']); ?>">
 			<input type="hidden" name="translations" value="<?php echo implode(',', $this->translations); ?>">
-			<?php $this->import('LanguageEditor');
+			<?php $this->LanguageEditor = \Netzmacht\Contao\LanguageEditor\LanguageEditor::getInstance();
 				foreach ($this->result as $group=>$result): ?>
 				<fieldset class="tl_box block translation_update">
 					<legend><?php echo $group; ?></legend>

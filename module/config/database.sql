@@ -15,7 +15,7 @@ CREATE TABLE `tl_translation` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `tstamp` int(10) unsigned NOT NULL default '0',
   `langgroup` varchar(255) NOT NULL default '',
-  `langvar` varchar(255) NOT NULL default '',
+  `langvar` varchar(255) NULL,
   `language` char(2) NOT NULL default '',
   `backend` char(1) NOT NULL default '',
   `frontend` char(1) NOT NULL default '',

@@ -1,0 +1,312 @@
+<?php
+
+/**
+ * Language editor
+ * Copyright (C) 2010,2011 Tristan Lins, 2015 David Molineus
+ *
+ * @copyright  InfinitySoft 2012, netzmacht creative 2015
+ * @author	   Tristan Lins <tristan.lins@infinitysoft.de>
+ * @author	   David Molineus <david.molineus@netzmacht.de>
+ * @package	   Language Editor
+ * @license	   LGPL
+ * @filesource
+ */
+
+namespace Netzmacht\Contao\LanguageEditor;
+
+use File;
+
+/**
+ * Class LanguageVariableSearch
+ *
+ * @copyright  InfinitySoft 2012
+ * @author     Tristan Lins <tristan.lins@infinitysoft.de>
+ * @package    Language Editor
+ */
+class LanguageVariableSearch
+{
+    /**
+     * @var LanguageEditor
+     */
+    protected $LanguageEditor;
+
+    /**
+     * @var array
+     */
+    protected $languageVariableKeys = null;
+
+    public function __construct()
+    {
+        $this->LanguageEditor = LanguageEditor::getInstance();
+    }
+
+    /**
+     * @return string
+     */
+    public function searchLanguageVariable()
+    {
+        $template = new \BackendTemplate('be_translation_search');
+
+        if (\Input::post('FORM_SUBMIT') == 'tl_translation_search') {
+            if (\Input::get('back')) {
+                \Controller::redirect('contao/main.php?do=language-editor&key=search');
+            }
+
+            $_SESSION['tl_translation_search_keyword']     = \Input::post('keyword');
+            $_SESSION['tl_translation_search_language']    = \Input::post('language');
+            $_SESSION['tl_translation_search_translation'] = \Input::post('translation');
+
+            $keyword      = html_entity_decode(\Input::post('keyword'), ENT_QUOTES | ENT_HTML401, 'UTF-8');
+            $language     = \Input::post('language');
+            $translations = \Input::post('translation')
+                ? array(\Input::post('translation'))
+                : (\Input::post('translations')
+                    ? explode(',', \Input::post('translations'))
+                    : array_keys($GLOBALS['TL_TRANSLATION'])
+                );
+
+            $result       = array();
+            $results      = 0;
+            $keywordRgxp  = $this->getKeywordRegexp($keyword);
+
+            $start = time();
+            $end   = ini_get('max_execution_time');
+
+            if ($end > 0) {
+                $end = $start + 0.75 * $end;
+            } else {
+                $end = $start + 30;
+            }
+
+            while (time() < $end && count($translations) && !$results) {
+                $translation  = array_shift($translations);
+                $result[$translation] = array();
+
+                \Controller::loadLanguageFile($this->LanguageEditor->getLanguageFileName($translation), $language, true);
+
+                if (isset($GLOBALS['TL_LANG'][$translation]) && isset($GLOBALS['TL_TRANSLATION'][$translation])) {
+                    foreach ($GLOBALS['TL_TRANSLATION'][$translation] as $path => $config) {
+                        $value = $this->LanguageEditor->getLangValue($GLOBALS['TL_LANG'], explode('|', $path), true);
+
+                        $this->matchResults($value, $keywordRgxp, $result, $results, $translation, $path);
+                    }
+                }
+            }
+
+            $template->translations = $translations;
+            $template->result       = $result;
+        } else {
+            if (!isset($_SESSION['tl_translation_search_language'])) {
+                $_SESSION['tl_translation_search_language'] = $GLOBALS['TL_LANGUAGE'];
+            }
+
+            $template->translations = array_keys($GLOBALS['TL_TRANSLATION']);
+        }
+
+        return $template->parse();
+    }
+
+    /**
+     * @return string
+     */
+    public function buildLanguageVariableKeys()
+    {
+        $template = new \BackendTemplate('be_translation_search_build_keys');
+
+        if (\Input::post('FORM_SUBMIT') == 'tl_translation_search_build_keys') {
+            // clean old files
+            if (\Input::post('clean')) {
+                $files = new \RegexIterator(
+                    new \DirectoryIterator(TL_ROOT . '/system/languages/'),
+                    '#^langkeys\..*\.php$#'
+                );
+
+                foreach ($files as $file) {
+                    $file = new File('system/languages/' . $file->getFilename());
+                    $file->delete();
+                }
+            }
+
+            $translations = $this->getTranslations();
+
+            if (count($translations)) {
+                $template->translations = $translations;
+            } else {
+                $_SESSION['TL_INFO'][] = $GLOBALS['TL_LANG']['tl_translation']['nothinktodo'];
+                \Controller::reload();
+            }
+        } elseif (\Input::get('translation')) {
+            // get the next translation group
+            $translation = \Input::get('translation');
+
+            $file = new File('system/languages/langkeys.' . $translation . '.php');
+            $file->write("<?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
+
+/**
+ * DO NOT MODIFY THIS FILE, IT IS GENERATED BY THE LANGUAGE EDITOR!
+ */
+");
+
+            // load the language
+            \Controller::loadLanguageFile($this->LanguageEditor->getLanguageFileName($translation));
+
+            if (is_array($GLOBALS['TL_LANG'][$translation])) {
+                $this->languageVariableKeys = array();
+
+                $this->buildLanguageVariableKeysFrom($translation,
+                    $translation,
+                    $GLOBALS['TL_LANG'][$translation]);
+
+                ksort($this->languageVariableKeys);
+
+                foreach ($this->languageVariableKeys as $translation => $v) {
+                    foreach ($v as $path => $config) {
+                        $key   = "\$GLOBALS['TL_TRANSLATION']['$translation']['$path']";
+                        $value = var_export($config, true);
+
+                        $file->append($key . ' = ' . $value . ";\n");
+                    }
+                }
+            }
+
+            $file->close();
+
+            header('Content-Type: image/png');
+            $handle = fopen(TL_ROOT . '/system/modules/language-editor/html/complete.png', 'rb');
+            fpassthru($handle);
+            fclose($handle);
+            exit;
+        } else {
+            // get translation keys found by the TranslationSearch::buildTranslationKeys method
+            $files = new \RegexIterator(
+                new \DirectoryIterator(TL_ROOT . '/system/languages/'),
+                '#^langkeys\..*\.php$#'
+            );
+
+            foreach ($files as $file) {
+                require_once($file->getPathname());
+            }
+        }
+
+        return $template->parse();
+    }
+
+    /**
+     * Build language variable keys.
+     *
+     * @param string $translation The translation key.
+     * @param string $path        The translation path.
+     * @param string $language    The language.
+     *
+     * @return void
+     */
+    protected function buildLanguageVariableKeysFrom($translation, $path, $language)
+    {
+        if (!isset($GLOBALS['TL_TRANSLATION'][$translation][$path])) {
+            if (!is_array($language)) {
+                $this->languageVariableKeys[$translation][$path] = array(
+                    'type' => 'text'
+                );
+            } elseif (array_is_assoc($language) || count($language) > 2) {
+                foreach ($language as $k => $v) {
+                    $this->buildLanguageVariableKeysFrom($translation, $path . '|' . $k, $v);
+                }
+            } else {
+                $this->languageVariableKeys[$translation][$path] = array(
+                    'type' => 'inputField'
+                );
+            }
+        }
+    }
+
+    protected function getTranslations()
+    {
+        $translations = array();
+
+        // walk over modules and find translations
+        $modules = \Config::getInstance()->getActiveModules();
+        foreach ($modules as $module) {
+            $path = TL_ROOT . '/system/modules/' . $module . '/languages';
+            if (is_dir($path)) {
+                $files = new \RecursiveIteratorIterator(
+                    new \RecursiveDirectoryIterator($path));
+                foreach ($files as $file) {
+                    if (preg_match('#/languages/\w\w/([^/]+)\.php#', $file->getPathname(), $match)
+                        && $match[1] != 'countries'
+                        && $match[1] != 'default'
+                        && $match[1] != 'explain'
+                        && $match[1] != 'languages'
+                        && $match[1] != 'modules'
+                        && !in_array($match[1], $translations)) {
+                        $translations[] = $match[1];
+                    }
+                }
+            }
+        }
+        sort($translations);
+
+        // add defaults
+        $translations = array_merge(
+            $translations,
+            array_keys(LanguageEditor::$defaultGroups)
+        );
+
+        $temp = array();
+        foreach ($translations as $translation) {
+            if (!is_file(TL_ROOT . '/system/languages/langkeys.' . $translation . '.php')) {
+                $temp[] = $translation;
+            }
+        }
+
+        return $temp;
+    }
+
+    /**
+     * Get keyword regexp.
+     *
+     * @param string $keyword The search keyword.
+     *
+     * @return string
+     */
+    private function getKeywordRegexp($keyword)
+    {
+        $fullMatch = strpos($keyword, '*') !== false;
+
+        $regexp  = '#' . ($fullMatch ? '^' : '');
+        $regexp .= implode(
+            '.*',
+            array_map('preg_quote', explode('*', $keyword))
+        );
+
+        $regexp .= ($fullMatch ? '$' : '') . '#i';
+
+        return $regexp;
+    }
+
+    /**
+     * Match search results.
+     *
+     * @param $value
+     * @param $keywordRgxp
+     * @param $result
+     * @param $results
+     * @param $translation
+     * @param $path
+     */
+    private function matchResults($value, $keywordRgxp, &$result, &$results, $translation, $path)
+    {
+        if (!is_array($value)) {
+            if (preg_match($keywordRgxp, $value)
+                || preg_match($keywordRgxp, strip_tags($value))) {
+                $result[$translation][$path] = $value;
+                $results ++;
+            }
+
+            return;
+        }
+
+        foreach ($value as $v) {
+            $this->matchResults($v, $keywordRgxp, $result, $results, $translation, $path);
+        }
+    }
+}

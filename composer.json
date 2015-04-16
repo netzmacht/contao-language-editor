@@ -45,7 +45,8 @@
         },
         "contao": {
             "sources":{
-                "module": "system/modules/language-editor"
+                "module": "system/modules/language-editor",
+                "languages": "system/languages"
             }
         }
     }
