@@ -1,9 +1,9 @@
 <div id="tl_buttons">
-	<?php if (is_array($this->result)): ?>
-		<a href="contao/main.php?do=language-editor&amp;key=search" class="header_back" title="<?php echo specialchars($GLOBALS['TL_LANG']['MSC']['backBT']); ?>" accesskey="b" onclick="Backend.getScrollOffset();"><?php echo $GLOBALS['TL_LANG']['MSC']['backBT']; ?></a>
-	<?php else: ?>
-		<a href="contao/main.php?do=language-editor" class="header_back" title="<?php echo specialchars($GLOBALS['TL_LANG']['MSC']['backBT']); ?>" accesskey="b" onclick="Backend.getScrollOffset();"><?php echo $GLOBALS['TL_LANG']['MSC']['backBT']; ?></a>
-	<?php endif; ?>
+    <?php if (is_array($this->result)): ?>
+        <a href="contao/main.php?do=language-editor&amp;key=search" class="header_back" title="<?php echo specialchars($GLOBALS['TL_LANG']['MSC']['backBT']); ?>" accesskey="b" onclick="Backend.getScrollOffset();"><?php echo $GLOBALS['TL_LANG']['MSC']['backBT']; ?></a>
+    <?php else: ?>
+        <a href="contao/main.php?do=language-editor" class="header_back" title="<?php echo specialchars($GLOBALS['TL_LANG']['MSC']['backBT']); ?>" accesskey="b" onclick="Backend.getScrollOffset();"><?php echo $GLOBALS['TL_LANG']['MSC']['backBT']; ?></a>
+    <?php endif; ?>
 </div>
 
 <h2 class="sub_headline"><?php echo $GLOBALS['TL_LANG']['tl_translation']['search']; ?></h2>
@@ -11,86 +11,86 @@
 <?php echo $this->getMessages(); ?>
 
 <form action="contao/main.php?do=language-editor&amp;key=search" id="tl_translation" class="tl_form" method="post"
-	  enctype="application/x-www-form-urlencoded" onsubmit="$('tl_translation').addClass('searching'); $('ctrl_submit').setProperty('disabled', true);">
-	<input type="hidden" name="FORM_SUBMIT" value="tl_translation_search">
-	<input type="hidden" name="REQUEST_TOKEN" value="<?php echo REQUEST_TOKEN; ?>">
+      enctype="application/x-www-form-urlencoded" onsubmit="$('tl_translation').addClass('searching'); $('ctrl_submit').setProperty('disabled', true);">
+    <input type="hidden" name="FORM_SUBMIT" value="tl_translation_search">
+    <input type="hidden" name="REQUEST_TOKEN" value="<?php echo REQUEST_TOKEN; ?>">
 
-	<div class="tl_formbody_edit">
-		<?php if (is_array($this->result)): ?>
-			<input type="hidden" name="keyword" value="<?php echo specialchars($_SESSION['tl_translation_search_keyword']); ?>">
-			<input type="hidden" name="language" value="<?php echo specialchars($_SESSION['tl_translation_search_language']); ?>">
-			<input type="hidden" name="translation" value="<?php echo specialchars($_SESSION['tl_translation_search_translation']); ?>">
-			<input type="hidden" name="translations" value="<?php echo implode(',', $this->translations); ?>">
-			<?php $this->LanguageEditor = \Netzmacht\Contao\LanguageEditor\LanguageEditor::getInstance();
-				foreach ($this->result as $group=>$result): ?>
-				<fieldset class="tl_box block translation_update">
-					<legend><?php echo $group; ?></legend>
-					<?php if (count($result)): foreach ($result as $k=>$v): ?>
-						<div>
-							<h3>
-								<a href="contao/main.php?do=language-editor&amp;act=create&amp;langvar=<?php echo rawurlencode(specialchars($group . '::' . $k)); ?>&amp;language=<?php echo $_SESSION['tl_translation_search_language']; ?>">
-									<?php echo str_replace('|', '.', $k); ?>
-								</a>
-							</h3>
+    <div class="tl_formbody_edit">
+        <?php if (is_array($this->result)): ?>
+            <input type="hidden" name="keyword" value="<?php echo specialchars($_SESSION['tl_translation_search_keyword']); ?>">
+            <input type="hidden" name="language" value="<?php echo specialchars($_SESSION['tl_translation_search_language']); ?>">
+            <input type="hidden" name="translation" value="<?php echo specialchars($_SESSION['tl_translation_search_translation']); ?>">
+            <input type="hidden" name="translations" value="<?php echo implode(',', $this->translations); ?>">
+            <?php $this->LanguageEditor = \Netzmacht\Contao\LanguageEditor\LanguageEditor::getInstance();
+            foreach ($this->result as $group=>$result): ?>
+                <fieldset class="tl_box block translation_update">
+                    <legend><?php echo $group; ?></legend>
+                    <?php if (count($result)): foreach ($result as $k=>$v): ?>
+                        <div>
+                            <h3>
+                                <a href="contao/main.php?do=language-editor&amp;act=create&amp;langvar=<?php echo rawurlencode(specialchars($group . '::' . $k)); ?>&amp;language=<?php echo $_SESSION['tl_translation_search_language']; ?>">
+                                    <?php echo str_replace('|', '.', $k); ?>
+                                </a>
+                            </h3>
 							<pre class="translation_content"><?php
-								$v = $this->LanguageEditor->plainEncode($v);
-								if (is_array($v)) {
-									echo '&ndash; ' . implode('<br>&ndash; ', $v);
-								} else {
-									echo $v;
-								}
-							?></pre>
-						</div>
-					<?php endforeach; else: ?>
-						<div>
-							<?php echo $GLOBALS['TL_LANG']['tl_translation']['empty']; ?>
-						</div>
-					<?php endif; ?>
-				</fieldset>
-			<?php endforeach; ?>
-		<?php else: ?>
-			<fieldset class="tl_tbox block">
-				<div class="long">
-					<h3>
-						<label for="ctrl_keyword"><?php echo $GLOBALS['TL_LANG']['tl_translation']['keyword'][0]; ?></label>
-					</h3>
-					<input type="text" name="keyword" id="ctrl_keyword" class="tl_text" value="<?php echo $_SESSION['tl_translation_search_keyword']; ?>" onfocus="Backend.getScrollOffset();">
-					<p class="tl_help tl_tip"><?php echo $GLOBALS['TL_LANG']['tl_translation']['keyword'][1]; ?></p>
-				</div>
-				<div class="clr w50">
-					<h3>
-						<label for="ctrl_language"><?php echo $GLOBALS['TL_LANG']['tl_translation']['language'][0]; ?></label>
-					</h3>
-					<select id="ctrl_language" name="language" class="tl_select">
-						<?php foreach ($this->getLanguages() as $k=>$v): ?>
-						<option value="<?php echo $k; ?>"<?php if ($_SESSION['tl_translation_search_language'] == $k): ?> selected="selected"<?php endif; ?>><?php echo $v; ?></option>
-						<?php endforeach; ?>
-					</select>
-					<p class="tl_help tl_tip"><?php echo $GLOBALS['TL_LANG']['tl_translation']['language'][1]; ?></p>
-				</div>
-				<div class="w50">
-					<h3>
-						<label for="ctrl_translation"><?php echo $GLOBALS['TL_LANG']['tl_translation']['langgroup'][0]; ?></label>
-					</h3>
-					<select id="ctrl_translation" name="translation" class="tl_select">
-                        			<option value="">-</option>
-                        			<?php foreach ($this->translations as $translation): ?>
-						<option value="<?php echo $translation; ?>"<?php if ($_SESSION['tl_translation_search_translation'] == $translation): ?> selected="selected"<?php endif; ?>><?php echo $translation; ?></option>
-						<?php endforeach; ?>
-					</select>
-					<p class="tl_help tl_tip"><?php echo $GLOBALS['TL_LANG']['tl_translation']['langgroup'][1]; ?></p>
-				</div>
-			</fieldset>
-		<?php endif; ?>
-	</div>
+                                $v = $this->LanguageEditor->plainEncode($v);
+                                if (is_array($v)) {
+                                    echo '&ndash; ' . implode('<br>&ndash; ', $v);
+                                } else {
+                                    echo $v;
+                                }
+                                ?></pre>
+                        </div>
+                    <?php endforeach; else: ?>
+                        <div>
+                            <?php echo $GLOBALS['TL_LANG']['tl_translation']['empty']; ?>
+                        </div>
+                    <?php endif; ?>
+                </fieldset>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <fieldset class="tl_tbox block">
+                <div class="long">
+                    <h3>
+                        <label for="ctrl_keyword"><?php echo $GLOBALS['TL_LANG']['tl_translation']['keyword'][0]; ?></label>
+                    </h3>
+                    <input type="text" name="keyword" id="ctrl_keyword" class="tl_text" value="<?php echo $_SESSION['tl_translation_search_keyword']; ?>" onfocus="Backend.getScrollOffset();">
+                    <p class="tl_help tl_tip"><?php echo $GLOBALS['TL_LANG']['tl_translation']['keyword'][1]; ?></p>
+                </div>
+                <div class="clr w50">
+                    <h3>
+                        <label for="ctrl_language"><?php echo $GLOBALS['TL_LANG']['tl_translation']['language'][0]; ?></label>
+                    </h3>
+                    <select id="ctrl_language" name="language" class="tl_select">
+                        <?php foreach ($this->getLanguages() as $k=>$v): ?>
+                            <option value="<?php echo $k; ?>"<?php if ($_SESSION['tl_translation_search_language'] == $k): ?> selected="selected"<?php endif; ?>><?php echo $v; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <p class="tl_help tl_tip"><?php echo $GLOBALS['TL_LANG']['tl_translation']['language'][1]; ?></p>
+                </div>
+                <div class="w50">
+                    <h3>
+                        <label for="ctrl_translation"><?php echo $GLOBALS['TL_LANG']['tl_translation']['langgroup'][0]; ?></label>
+                    </h3>
+                    <select id="ctrl_translation" name="translation" class="tl_select">
+                        <option value="">-</option>
+                        <?php foreach ($this->translations as $translation): ?>
+                            <option value="<?php echo $translation; ?>"<?php if ($_SESSION['tl_translation_search_translation'] == $translation): ?> selected="selected"<?php endif; ?>><?php echo $translation; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <p class="tl_help tl_tip"><?php echo $GLOBALS['TL_LANG']['tl_translation']['langgroup'][1]; ?></p>
+                </div>
+            </fieldset>
+        <?php endif; ?>
+    </div>
 
-	<div class="tl_formbody_submit">
-		<div class="tl_submit_container">
-			<?php if (is_array($this->result)): ?>
-				<input type="submit" class="tl_submit" id="ctrl_submit" accesskey="r" name="continue" value="<?php echo $GLOBALS['TL_LANG']['tl_translation']['continue']; ?>">
-			<?php else: ?>
-				<input type="submit" class="tl_submit" id="ctrl_submit" accesskey="r" value="<?php echo $GLOBALS['TL_LANG']['tl_translation']['dosearch']; ?>">
-			<?php endif; ?>
-		</div>
-	</div>
+    <div class="tl_formbody_submit">
+        <div class="tl_submit_container">
+            <?php if (is_array($this->result)): ?>
+                <input type="submit" class="tl_submit" id="ctrl_submit" accesskey="r" name="continue" value="<?php echo $GLOBALS['TL_LANG']['tl_translation']['continue']; ?>">
+            <?php else: ?>
+                <input type="submit" class="tl_submit" id="ctrl_submit" accesskey="r" value="<?php echo $GLOBALS['TL_LANG']['tl_translation']['dosearch']; ?>">
+            <?php endif; ?>
+        </div>
+    </div>
 </form>

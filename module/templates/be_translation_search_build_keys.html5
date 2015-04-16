@@ -1,9 +1,9 @@
 <div id="tl_buttons">
-	<?php if ($this->translations): ?>
-		<a href="contao/main.php?do=language-editor&amp;key=build" class="header_back" title="<?php echo specialchars($GLOBALS['TL_LANG']['MSC']['backBT']); ?>" accesskey="b" onclick="Backend.getScrollOffset();"><?php echo $GLOBALS['TL_LANG']['MSC']['backBT']; ?></a>
-	<?php else: ?>
-		<a href="contao/main.php?do=language-editor" class="header_back" title="<?php echo specialchars($GLOBALS['TL_LANG']['MSC']['backBT']); ?>" accesskey="b" onclick="Backend.getScrollOffset();"><?php echo $GLOBALS['TL_LANG']['MSC']['backBT']; ?></a>
-	<?php endif; ?>
+    <?php if ($this->translations): ?>
+        <a href="contao/main.php?do=language-editor&amp;key=build" class="header_back" title="<?php echo specialchars($GLOBALS['TL_LANG']['MSC']['backBT']); ?>" accesskey="b" onclick="Backend.getScrollOffset();"><?php echo $GLOBALS['TL_LANG']['MSC']['backBT']; ?></a>
+    <?php else: ?>
+        <a href="contao/main.php?do=language-editor" class="header_back" title="<?php echo specialchars($GLOBALS['TL_LANG']['MSC']['backBT']); ?>" accesskey="b" onclick="Backend.getScrollOffset();"><?php echo $GLOBALS['TL_LANG']['MSC']['backBT']; ?></a>
+    <?php endif; ?>
 </div>
 
 <h2 class="sub_headline"><?php echo $GLOBALS['TL_LANG']['tl_translation']['build']; ?></h2>
@@ -11,48 +11,48 @@
 <?php echo $this->getMessages(); ?>
 
 <form action="contao/main.php?do=language-editor&amp;key=build" id="tl_translation" class="tl_form" method="post"
-	  enctype="application/x-www-form-urlencoded" onsubmit="$('ctrl_submit').disabled=true;">
-	<input type="hidden" name="FORM_SUBMIT" value="tl_translation_search_build_keys">
-	<input type="hidden" name="REQUEST_TOKEN" value="<?php echo REQUEST_TOKEN; ?>">
+      enctype="application/x-www-form-urlencoded" onsubmit="$('ctrl_submit').disabled=true;">
+    <input type="hidden" name="FORM_SUBMIT" value="tl_translation_search_build_keys">
+    <input type="hidden" name="REQUEST_TOKEN" value="<?php echo REQUEST_TOKEN; ?>">
 
-	<div class="tl_formbody_edit">
-		<?php if ($this->translations): ?>
-			<fieldset class="tl_box block translation_update">
-				<legend><?php echo $GLOBALS['TL_LANG']['tl_translation']['update']; ?></legend>
-				<?php foreach ($this->translations as $translation): ?>
-					<div>
-						<img src="contao/main.php?do=language-editor&amp;key=build&amp;translation=<?php echo $translation; ?>" alt="<?php echo $translation; ?>" width="16" height="16" class="tl_translation_indicator">
-						<?php echo $translation; ?>
-					</div>
-				<?php endforeach; ?>
-			</fieldset>
-		<?php else: ?>
-			<fieldset class="tl_tbox block">
-				<legend><?php echo $GLOBALS['TL_LANG']['tl_translation']['statistic']; ?></legend>
-				<div class="w50">
-					<div class="tl_checkbox_single_container">
-						<strong><?php echo $GLOBALS['TL_LANG']['tl_translation']['groupCount']; ?>:</strong>
-						<?php echo count($GLOBALS['TL_TRANSLATION']); ?>
-					</div>
-					<div>
-						<strong><?php echo $GLOBALS['TL_LANG']['tl_translation']['langvarCount']; ?>:</strong>
-						<?php echo array_sum(array_map('count', $GLOBALS['TL_TRANSLATION'])); ?>
-					</div>
-				</div>
-				<div class="w50">
-					<div class="tl_checkbox_single_container">
-						<input type="checkbox" id="ctrl_clean" name="clean" value="1">
-						<label for="ctrl_clean"><?php echo $GLOBALS['TL_LANG']['tl_translation']['clean'][0]; ?></label>
-					</div>
-					<p class="tl_help tl_tip"><?php echo $GLOBALS['TL_LANG']['tl_translation']['clean'][1]; ?></p>
-				</div>
-			</fieldset>
-		<?php endif; ?>
-	</div>
+    <div class="tl_formbody_edit">
+        <?php if ($this->translations): ?>
+            <fieldset class="tl_box block translation_update">
+                <legend><?php echo $GLOBALS['TL_LANG']['tl_translation']['update']; ?></legend>
+                <?php foreach ($this->translations as $translation): ?>
+                    <div>
+                        <img src="contao/main.php?do=language-editor&amp;key=build&amp;translation=<?php echo $translation; ?>" alt="<?php echo $translation; ?>" width="16" height="16" class="tl_translation_indicator">
+                        <?php echo $translation; ?>
+                    </div>
+                <?php endforeach; ?>
+            </fieldset>
+        <?php else: ?>
+            <fieldset class="tl_tbox block">
+                <legend><?php echo $GLOBALS['TL_LANG']['tl_translation']['statistic']; ?></legend>
+                <div class="w50">
+                    <div class="tl_checkbox_single_container">
+                        <strong><?php echo $GLOBALS['TL_LANG']['tl_translation']['groupCount']; ?>:</strong>
+                        <?php echo count($GLOBALS['TL_TRANSLATION']); ?>
+                    </div>
+                    <div>
+                        <strong><?php echo $GLOBALS['TL_LANG']['tl_translation']['langvarCount']; ?>:</strong>
+                        <?php echo array_sum(array_map('count', $GLOBALS['TL_TRANSLATION'])); ?>
+                    </div>
+                </div>
+                <div class="w50">
+                    <div class="tl_checkbox_single_container">
+                        <input type="checkbox" id="ctrl_clean" name="clean" value="1">
+                        <label for="ctrl_clean"><?php echo $GLOBALS['TL_LANG']['tl_translation']['clean'][0]; ?></label>
+                    </div>
+                    <p class="tl_help tl_tip"><?php echo $GLOBALS['TL_LANG']['tl_translation']['clean'][1]; ?></p>
+                </div>
+            </fieldset>
+        <?php endif; ?>
+    </div>
 
-	<div class="tl_formbody_submit">
-		<div class="tl_submit_container">
-			<input type="submit" class="tl_submit" id="ctrl_submit" accesskey="r" value="<?php echo $GLOBALS['TL_LANG']['tl_translation']['regenerate']; ?>"<?php if ($this->translations): ?> disabled="disabled"<?php endif; ?>>
-		</div>
-	</div>
+    <div class="tl_formbody_submit">
+        <div class="tl_submit_container">
+            <input type="submit" class="tl_submit" id="ctrl_submit" accesskey="r" value="<?php echo $GLOBALS['TL_LANG']['tl_translation']['regenerate']; ?>"<?php if ($this->translations): ?> disabled="disabled"<?php endif; ?>>
+        </div>
+    </div>
 </form>

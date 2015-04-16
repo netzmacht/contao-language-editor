@@ -18,11 +18,11 @@
  */
 $GLOBALS['BE_MOD']['system']['language-editor'] = array
 (
-	'tables'     => array('tl_translation'),
-	'icon'       => 'system/modules/language-editor/html/icon.png',
-	'search'     => array('Netzmacht\Contao\LanguageEditor\LanguageVariableSearch', 'searchLanguageVariable'),
-	'build'      => array('Netzmacht\Contao\LanguageEditor\LanguageVariableSearch', 'buildLanguageVariableKeys'),
-	'stylesheet' => 'system/modules/language-editor/html/backend.css'
+    'tables'     => array('tl_translation'),
+    'icon'       => 'system/modules/language-editor/html/icon.png',
+    'search'     => array('Netzmacht\Contao\LanguageEditor\LanguageVariableSearch', 'searchLanguageVariable'),
+    'build'      => array('Netzmacht\Contao\LanguageEditor\LanguageVariableSearch', 'buildLanguageVariableKeys'),
+    'stylesheet' => 'system/modules/language-editor/html/backend.css'
 );
 
 
