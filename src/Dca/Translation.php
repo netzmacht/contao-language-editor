@@ -138,7 +138,16 @@ class Translation extends \Backend
 
     public function saveLangGroup($varValue, \DataContainer $dc)
     {
-        return preg_replace('#^([^:]+)::.*$#', '$1', $dc->activeRecord->langvar);
+        $langGroup = preg_replace('#^([^:]+)::.*$#', '$1', $varValue);
+
+        $database = \Database::getInstance()
+            ->prepare('UPDATE tl_translation %s WHERE id=?')
+            ->set(array('langgroup' => $langGroup))
+            ->execute($dc->id);
+
+        $dc->activeRecord->langgroup = $langGroup;
+
+        return $varValue;
     }
 
     public function getLanguageVariablesOptions(DataContainer $dc)

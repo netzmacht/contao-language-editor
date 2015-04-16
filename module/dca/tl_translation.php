@@ -134,7 +134,7 @@ $GLOBALS['TL_DCA']['tl_translation'] = array
 	'metapalettes' => array
 	(
 		'default'                     => array(
-			'translation' => array('langgroup', 'langvar', 'language', 'backend', 'frontend', 'default', 'content')
+			'translation' => array('langvar', 'language', 'backend', 'frontend', 'default', 'content')
 		)
 	),
 
@@ -146,19 +146,28 @@ $GLOBALS['TL_DCA']['tl_translation'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_translation']['langgroup'],
 			'filter'                  => true,
-			'inputType'               => 'hiddenField',
-			'eval'                    => array('alwaysSave'=>true, 'doNotShow'=>true),
-			'save_callback'           => array(array('Netzmacht\Contao\LanguageEditor\Dca\Translation', 'saveLangGroup'))
+			'inputType'               => 'text',
 		),
-		'langvar' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_translation']['langvar'],
-			'default'                 => $this->Input->get('langvar'),
-			'search'                  => true,
-			'inputType'               => 'select',
-			'options_callback'        => array('Netzmacht\Contao\LanguageEditor\Dca\Translation', 'getLanguageVariablesOptions'),
-			'eval'                    => array('mandatory'=>true, 'chosen'=>true, 'includeBlankOption'=>true, 'submitOnChange'=>true, 'tl_class'=>'w50')
-		),
+        'langvar' => array
+        (
+            'label'            => &$GLOBALS['TL_LANG']['tl_translation']['langvar'],
+            'default'          => $this->Input->get('langvar'),
+            'search'           => true,
+            'inputType'        => 'select',
+            'save_callback'    => array(array('Netzmacht\Contao\LanguageEditor\Dca\Translation', 'saveLangGroup')),
+            'options_callback' => array(
+                'Netzmacht\Contao\LanguageEditor\Dca\Translation',
+                'getLanguageVariablesOptions'
+            ),
+            'eval'             => array(
+                'mandatory'          => true,
+                'chosen'             => true,
+                'includeBlankOption' => true,
+                'submitOnChange'     => true,
+                'tl_class'           => 'w50',
+                'alwaysSave'         => true,
+            )
+        ),
 		'language' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_translation']['language'],
