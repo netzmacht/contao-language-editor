@@ -86,6 +86,23 @@ class LanguageEditor extends \Backend
     }
 
     /**
+     * Get all language groups which belongs to a file.
+     *
+     * @param string $fileName The file name.
+     *
+     * @return array
+     */
+    public function getLanguageGroups($fileName)
+    {
+        return array_filter(
+            static::$defaultGroups,
+            function ($item) use ($fileName) {
+                return $item === $fileName;
+            }
+        );
+    }
+
+    /**
      * Get language value.
      *
      * @param array $parent The parent array.

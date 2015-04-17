@@ -42,3 +42,8 @@ $GLOBALS['TL_TRANSLATION']['tl_translation']['tl_translation|translation'] = arr
  * Form fields
  */
 $GLOBALS['BE_FFL']['langplain'] = 'Netzmacht\Contao\LanguageEditor\LangPlainWidget';
+
+/**
+ * Hooks
+ */
+$GLOBALS['TL_HOOKS']['loadLanguageFile'][] = array('Netzmacht\Contao\LanguageEditor\Hooks', 'loadLanguageFile');
