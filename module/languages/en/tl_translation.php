@@ -34,8 +34,8 @@ $GLOBALS['TL_LANG']['tl_translation']['translation_legend'] = 'Language var';
 /**
  * Buttons
  */
-$GLOBALS['TL_LANG']['tl_translation']['search'] = 'Search language var';
-$GLOBALS['TL_LANG']['tl_translation']['build']  = 'Build index';
+$GLOBALS['TL_LANG']['tl_translation']['search'] = array('Search language variables', 'Search language variables');
+$GLOBALS['TL_LANG']['tl_translation']['build']  = array('Build index', 'Build index');
 $GLOBALS['TL_LANG']['tl_translation']['new']    = array('Create entry', 'Create a new language var');
 $GLOBALS['TL_LANG']['tl_translation']['show']   = array('Details', 'Details of the language var ID %s');
 $GLOBALS['TL_LANG']['tl_translation']['copy']   = array('Copy language var', 'Copy language var ID %s');

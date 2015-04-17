@@ -34,8 +34,8 @@ $GLOBALS['TL_LANG']['tl_translation']['translation_legend'] = 'Sprachvariable';
 /**
  * Buttons
  */
-$GLOBALS['TL_LANG']['tl_translation']['search'] = 'Sprachvariable suchen';
-$GLOBALS['TL_LANG']['tl_translation']['build']  = 'Index aufbauen';
+$GLOBALS['TL_LANG']['tl_translation']['search'] = array('Sprachvariable suchen', 'Sprachvariable suchen');
+$GLOBALS['TL_LANG']['tl_translation']['build']  = array('Index aufbauen', 'Index aufbauen');
 $GLOBALS['TL_LANG']['tl_translation']['new']    = array('Neue Sprachvariable', 'Eine neue Sprachvariable erstellen');
 $GLOBALS['TL_LANG']['tl_translation']['show']   = array('Sprachvariablendetails', 'Details der Sprachvariable ID %s anzeigen');
 $GLOBALS['TL_LANG']['tl_translation']['copy']   = array('Sprachvariable duplizieren', 'Sprachvariable ID %s duplizieren');
