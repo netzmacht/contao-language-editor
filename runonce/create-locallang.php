@@ -7,6 +7,8 @@ class RunOnceController
     public function run()
     {
         if (!file_exists(TL_ROOT . '/system/languages/locallang.php')) {
+            // The composer client uses a custom error handler so the auto creation of the folder does not work
+            // because Contao does not check if the folder exists.
             if (!is_dir(TL_ROOT . '/system/languages')) {
                 $files = \Files::getInstance();
                 $files->mkdir('system/languages');
