@@ -1,6 +1,6 @@
 {
   "name":"netzmacht/contao-language-editor",
-  "description":"Contao Leaflet maps integration",
+  "description":"Contao langauge editor",
   "keywords":["contao", "language editor", "language"],
   "type":"contao-module",
   "license":"LGPL-3.0+",
