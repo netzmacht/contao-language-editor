@@ -14,8 +14,8 @@
   ],
   "support":{
     "email":"mail@netzmacht.de",
-    "issues":"https://github.com/netzmacht/contao-leaflet-maps/issues",
-    "source":"https://github.com/netzmacht/contao-leaflet-maps"
+    "issues":"https://github.com/netzmacht/contao-language-editor/issues",
+    "source":"https://github.com/netzmacht/contao-language-editor"
   },
   "require":{
     "php":">=5.4",
