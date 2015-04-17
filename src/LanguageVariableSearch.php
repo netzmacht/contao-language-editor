@@ -132,7 +132,7 @@ class LanguageVariableSearch
             if (count($translations)) {
                 $template->translations = $translations;
             } else {
-                $_SESSION['TL_INFO'][] = $GLOBALS['TL_LANG']['tl_translation']['nothinktodo'];
+                $_SESSION['TL_INFO'][] = $GLOBALS['TL_LANG']['tl_translation']['nothingtodo'];
                 \Controller::reload();
             }
         } elseif (\Input::get('translation')) {

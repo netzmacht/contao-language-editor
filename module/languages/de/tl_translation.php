@@ -68,4 +68,4 @@ $GLOBALS['TL_LANG']['tl_translation']['clean']        = array('Alle Sprachvariab
 $GLOBALS['TL_LANG']['tl_translation']['update']       = 'Index wird aufgebaut&hellip;';
 $GLOBALS['TL_LANG']['tl_translation']['regenerate']   = 'Sprachvariablen erfassen';
 $GLOBALS['TL_LANG']['tl_translation']['regenerated']  = 'Alle Sprachvariablen wurden erfasst.';
-$GLOBALS['TL_LANG']['tl_translation']['nothinktodo']  = 'Es gibt nichts zu tun.';
+$GLOBALS['TL_LANG']['tl_translation']['nothingtodo']  = 'Es gibt nichts zu tun.';
