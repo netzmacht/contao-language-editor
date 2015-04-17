@@ -6,7 +6,7 @@
     <?php endif; ?>
 </div>
 
-<h2 class="sub_headline"><?php echo $GLOBALS['TL_LANG']['tl_translation']['build']; ?></h2>
+<h2 class="sub_headline"><?php echo $GLOBALS['TL_LANG']['tl_translation']['build'][1]; ?></h2>
 
 <?php echo $this->getMessages(); ?>
 
