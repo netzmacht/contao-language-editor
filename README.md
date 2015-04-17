@@ -27,6 +27,6 @@ If you are already using the language editor there are small changes which you h
 License
 -------
 
-This extension is licensed under the [LGPL](License). 
+This extension is licensed under the [LGPL](LGPL.txt). 
 
 This software using the [Silk Icons](http://www.famfamfam.com/lab/icons/silk/).
