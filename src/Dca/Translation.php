@@ -14,76 +14,74 @@
 
 namespace Netzmacht\Contao\LanguageEditor\Dca;
 
-use Config;
 use DataContainer;
 use File;
 use Netzmacht\Contao\LanguageEditor\LanguageEditor;
 use Session;
 
+/**
+ * Backend gui translation handler.
+ *
+ * @package Netzmacht\Contao\LanguageEditor\Dca
+ */
 class Translation extends \Backend
 {
     /**
-     * @var Config
-     */
-    protected $Config;
-
-    /**
-     * @var Session
-     */
-    protected $Session;
-
-    /**
+     * The language editor reference.
+     *
      * @var LanguageEditor
      */
     protected $LanguageEditor;
 
     /**
-     * Import the back end user object
+     * Construct.
      */
     public function __construct()
     {
         parent::__construct();
         $this->import('BackendUser', 'User');
+
         $this->LanguageEditor = LanguageEditor::getInstance();
-
-        // get translation keys found by the TranslationSearch::buildTranslationKeys method
-        $objDir = new \RegexIterator(new \DirectoryIterator(TL_ROOT . '/system/languages/'), '#^langkeys\..*\.php$#');
-        /** @var SplFileInfo $objFile */
-        foreach ($objDir as $objFile) {
-            require_once($objFile->getPathname());
-        }
-
-        uksort($GLOBALS['TL_TRANSLATION'], 'strcasecmp');
+        $this->loadTranslationKeys();
     }
 
-    public function getLabel($arrRow, $label)
+    /**
+     * Generate the label.
+     *
+     * @param array  $row   The current row.
+     * @param string $label The default label.
+     *
+     * @return string
+     */
+    public function getLabel($row, $label)
     {
-        if ($arrRow['backend'] && $arrRow['frontend']) {
+        if ($row['backend'] && $row['frontend']) {
             $label = 'BE+FE ' . $label;
-        } else if ($arrRow['backend']) {
+        } else if ($row['backend']) {
             $label = 'BE ' . $label;
-        } else if ($arrRow['frontend']) {
+        } else if ($row['frontend']) {
             $label = 'FE ' . $label;
         } else {
-            $label = $this->generateImage('system/themes/' . $this->getTheme() . '/images/invisible.gif', '');
+            $label = \Image::getHtml('system/themes/' . $this->getTheme() . '/images/invisible.gif', '');
         }
 
-        list($strGroup, $strPath) = explode('::', $arrRow['langvar'], 2);
-        $strPath = (!preg_match('#^' . preg_quote($strGroup) . '|#', $strPath) ? $strGroup . '.' : '') . str_replace('|', '.', $strPath);
+        list($group, $path) = explode('::', $row['langvar'], 2);
+        $path = (!preg_match('#^' . preg_quote($group) . '|#', $path) ? $group . '.' : '') . str_replace('|', '.', $path);
 
-        if (empty($GLOBALS['TL_TRANSLATION'][$strGroup][$strPath]['label'])) {
-            $label .= ' <strong>' . $strPath . '</strong>';
+        if (empty($GLOBALS['TL_TRANSLATION'][$group][$path]['label'])) {
+            $label .= ' <strong>' . $path . '</strong>';
         } else {
-            $label .= ' <strong>' . $GLOBALS['TL_TRANSLATION'][$strGroup][$strPath]['label'] . '</strong>';
+            $label .= ' <strong>' . $GLOBALS['TL_TRANSLATION'][$group][$path]['label'] . '</strong>';
         }
 
-        $varContent = deserialize($arrRow['content']);
+        $varContent = deserialize($row['content']);
         if (!$varContent) {
-            $varContent = $arrRow['content'];
+            $varContent = $row['content'];
         }
 
         if (is_array($varContent)) {
-            $label .= '<pre class="translation_content">' . '&ndash; ' . implode('<br>&ndash; ', array_map(array($this->LanguageEditor, 'plainEncode'), $varContent)) . '</pre>';
+            $label .= '<pre class="translation_content">' . '&ndash; ';
+            $label .= implode('<br>&ndash; ', array_map(array($this->LanguageEditor, 'plainEncode'), $varContent)) . '</pre>';
         } else {
             $label .= '<pre class="translation_content">' . $this->LanguageEditor->plainEncode($varContent) . '</pre>';
         }
@@ -91,6 +89,13 @@ class Translation extends \Backend
         return $label;
     }
 
+    /**
+     * Load the translation.
+     *
+     * @param DataContainer $dc The data container driver.
+     *
+     * @return void
+     */
     public function loadTranslation(\DataContainer $dc)
     {
         $session     = Session::getInstance();
@@ -104,84 +109,97 @@ class Translation extends \Backend
             $this->reload();
         }
 
-        $objTranslation = $this->Database
+        $translation = \Database::getInstance()
             ->prepare("SELECT * FROM tl_translation WHERE id=?")
             ->execute($dc->id);
 
-        if ($objTranslation->next()) {
-            list($strGroup, $strPath) = explode('::', $objTranslation->langvar, 2);
-
-            $this->loadLanguageFile(isset(LanguageEditor::$defaultGroups[$strGroup])
-                ? LanguageEditor::$defaultGroups[$strGroup]
-                : $strGroup, $objTranslation->language, true);
-
-            if (isset($GLOBALS['TL_TRANSLATION'][$strGroup][$strPath])) {
-                $arrConfig = $GLOBALS['TL_TRANSLATION'][$strGroup][$strPath];
-
-                switch ($arrConfig['type']) {
-                    case 'legend':
-                        // do nothing, use default config
-                        break;
-
-                    case 'inputField':
-                        $GLOBALS['TL_DCA']['tl_translation']['fields']['content']['eval']['multiple'] = true;
-                        $GLOBALS['TL_DCA']['tl_translation']['fields']['content']['eval']['size'] = 2;
-                        break;
-
-                    case 'text':
-                        $GLOBALS['TL_DCA']['tl_translation']['fields']['content']['inputType'] = 'textarea';
-                        break;
-                }
-            }
+        if ($translation->next()) {
+            $this->prepareDca($translation);
         }
     }
 
-    public function saveLangGroup($varValue, \DataContainer $dc)
+    /**
+     * Save the lang group during saving the lang var.
+     *
+     * @param mixed         $value The lang var value.
+     * @param DataContainer $dc    The data container driver.
+     *
+     * @return mixed
+     */
+    public function saveLangGroup($value, \DataContainer $dc)
     {
-        $langGroup = preg_replace('#^([^:]+)::.*$#', '$1', $varValue);
+        $langGroup = preg_replace('#^([^:]+)::.*$#', '$1', $value);
 
-        $database = \Database::getInstance()
+        \Database::getInstance()
             ->prepare('UPDATE tl_translation %s WHERE id=?')
             ->set(array('langgroup' => $langGroup))
             ->execute($dc->id);
 
         $dc->activeRecord->langgroup = $langGroup;
 
-        return $varValue;
+        return $value;
     }
 
+    /**
+     * Get all language variable options.
+     *
+     * @param DataContainer $dc The data container driver.
+     *
+     * @return array
+     */
     public function getLanguageVariablesOptions(DataContainer $dc)
     {
-        $arrOptions = array();
-        foreach ($GLOBALS['TL_TRANSLATION'] as $strGroup => $arrKeys) {
-            $arrOptions[$strGroup] = array();
-            foreach ($arrKeys as $strKey=>$arrKey) {
-                if (!empty($arrKey['type'])) {
-                    $strPath = (!preg_match('#^' . preg_quote($strGroup) . '|#', $strKey) ? $strGroup . '.' : '') . str_replace('|', '.', $strKey);
-                    $arrOptions[$strGroup][$strGroup . '::' . $strKey] = '[' . $strPath . ']'
-                        . (isset($arrKey['label']) ? ' ' . $arrKey['label'] : '');
+        $options = array();
+        foreach ($GLOBALS['TL_TRANSLATION'] as $group => $keys) {
+            $options[$group] = array();
+            foreach ($keys as $key => $config) {
+                if (!empty($config['type'])) {
+                    $strPath = (!preg_match('#^' . preg_quote($group) . '|#', $key) ? $group . '.' : '') . str_replace('|', '.', $key);
+                    $options[$group][$group . '::' . $key] = '[' . $strPath . ']'
+                        . (isset($config['label']) ? ' ' . $config['label'] : '');
                 }
             }
         }
-        return $arrOptions;
+        return $options;
     }
 
-    public function loadDefault($varValue, DataContainer $dc)
+    /**
+     * Load the default lang value.
+     *
+     * @param mixed         $value The lang var value.
+     * @param DataContainer $dc    The data container driver.
+     *
+     * @return array|string
+     */
+    public function loadDefault($value, DataContainer $dc)
     {
         return strlen($dc->activeRecord->langvar)
             ? $this->LanguageEditor->getLangValue($GLOBALS['TL_LANG'], explode('|', preg_replace('#^[^:]+::#', '', $dc->activeRecord->langvar)))
             : '';
     }
 
-    public function loadContent($varValue, DataContainer $dc)
+    /**
+     * Loa the content.
+     *
+     * @param mixed         $value The lang var value.
+     * @param DataContainer $dc    The data container driver.
+     *
+     * @return array|string
+     */
+    public function loadContent($value, DataContainer $dc)
     {
-        if (empty($varValue) && strlen($dc->activeRecord->langvar)) {
+        if (empty($value) && strlen($dc->activeRecord->langvar)) {
             return $this->LanguageEditor->getLangValue($GLOBALS['TL_LANG'], explode('|', preg_replace('#^[^:]+::#', '', $dc->activeRecord->langvar)), true);
         } else {
-            return $varValue;
+            return $value;
         }
     }
 
+    /**
+     * Mark cached language file as deprecated to update it.
+     *
+     * @return void
+     */
     public function markUpdate()
     {
         $session     = Session::getInstance();
@@ -195,6 +213,11 @@ class Translation extends \Backend
         $session->set('tl_translation', $sessionData);
     }
 
+    /**
+     * Update the translations.
+     *
+     * @return void
+     */
     public function updateTranslations()
     {
         $this->log('Update translations', 'tl_translation::updateTranslations', 'TL_INFO');
@@ -237,6 +260,8 @@ class Translation extends \Backend
     }
 
     /**
+     * Load all translations from the database and prepare it being saved in the file.
+     *
      * @return array
      */
     private function loadTranslationsFromDatabase()
@@ -274,5 +299,61 @@ class Translation extends \Backend
         }
 
         return $translations;
+    }
+
+    /**
+     * Load the translations keys.
+     *
+     * @return void
+     */
+    private function loadTranslationKeys()
+    {
+        // get translation keys found by the TranslationSearch::buildTranslationKeys method
+        $files = new \RegexIterator(new \DirectoryIterator(TL_ROOT . '/system/languages/'), '#^langkeys\..*\.php$#');
+
+        foreach ($files as $file) {
+            require_once($file->getPathname());
+        }
+
+        uksort($GLOBALS['TL_TRANSLATION'], 'strcasecmp');
+    }
+
+    /**
+     * Prepare the dca for the given translation record.
+     *
+     * @param \Database\Result $translation The translation.
+     *
+     * @return void
+     */
+    private function prepareDca($translation)
+    {
+        list($group, $path) = explode('::', $translation->langvar, 2);
+
+        $this->loadLanguageFile(
+            isset(LanguageEditor::$defaultGroups[$group])
+                ? LanguageEditor::$defaultGroups[$group]
+                : $group,
+            $translation->language,
+            true
+        );
+
+        if (isset($GLOBALS['TL_TRANSLATION'][$group][$path])) {
+            $arrConfig = $GLOBALS['TL_TRANSLATION'][$group][$path];
+
+            switch ($arrConfig['type']) {
+                case 'legend':
+                    // do nothing, use default config
+                    break;
+
+                case 'inputField':
+                    $GLOBALS['TL_DCA']['tl_translation']['fields']['content']['eval']['multiple'] = true;
+                    $GLOBALS['TL_DCA']['tl_translation']['fields']['content']['eval']['size']     = 2;
+                    break;
+
+                case 'text':
+                    $GLOBALS['TL_DCA']['tl_translation']['fields']['content']['inputType'] = 'textarea';
+                    break;
+            }
+        }
     }
 }
