@@ -1,8 +1,8 @@
-<?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
+<?php
 
 /**
  * Language editor
- * Copyright (C) 2010,2011 Tristan Lins
+ * Copyright (C) 2010,2011 Tristan Lins, 2015 David Molineus
  *
  * @copyright  InfinitySoft 2012, netzmacht creative 2015
  * @author     Tristan Lins <tristan.lins@infinitysoft.de>
@@ -11,7 +11,6 @@
  * @license    LGPL
  * @filesource
  */
-
 
 /**
  * Back end modules

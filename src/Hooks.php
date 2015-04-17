@@ -1,12 +1,15 @@
 <?php
 
 /**
- * @package    dev
- * @author     David Molineus <david.molineus@netzmacht.de>
- * @copyright  2015 netzmacht creative David Molineus
- * @license    LGPL 3.0
- * @filesource
+ * Language editor
+ * Copyright (C) 2010,2011 Tristan Lins, 2015 David Molineus
  *
+ * @copyright  InfinitySoft 2012, netzmacht creative 2015
+ * @author     Tristan Lins <tristan.lins@infinitysoft.de>
+ * @author     David Molineus <david.molineus@netzmacht.de>
+ * @package    Language Editor
+ * @license    LGPL
+ * @filesource
  */
 
 namespace Netzmacht\Contao\LanguageEditor;
