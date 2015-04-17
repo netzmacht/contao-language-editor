@@ -38,9 +38,11 @@
     },
     "contao": {
       "sources":{
-        "module": "system/modules/language-editor",
-        "languages": "system/languages"
-      }
+        "module": "system/modules/language-editor"
+      },
+      "runonce": [
+        "runonce/create-locallang.php"
+      ]
     }
   }
 }
