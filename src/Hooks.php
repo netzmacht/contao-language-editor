@@ -5,10 +5,10 @@
  * Copyright (C) 2010,2011 Tristan Lins, 2015 David Molineus
  *
  * @copyright  InfinitySoft 2012, netzmacht creative 2015
- * @author     Tristan Lins <tristan.lins@infinitysoft.de>
- * @author     David Molineus <david.molineus@netzmacht.de>
- * @package    Language Editor
- * @license    LGPL
+ * @author	   Tristan Lins <tristan.lins@infinitysoft.de>
+ * @author	   David Molineus <david.molineus@netzmacht.de>
+ * @package	   Language Editor
+ * @license	   LGPL
  * @filesource
  */
 
@@ -26,7 +26,7 @@ class Hooks
      */
     public function loadLanguageFile()
     {
-        if (\Input::get('do') !== 'language-editor') {
+        if (\Input::get('do') !== 'language-editor' && file_exists(TL_ROOT . '/system/languages/locallang.php')) {
             include TL_ROOT . '/system/languages/locallang.php';
         }
     }

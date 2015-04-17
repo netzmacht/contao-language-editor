@@ -2,17 +2,17 @@
 
 namespace Netzmacht\Contao\LanguageEditor;
 
-class RunonceController
+class RunOnceController
 {
     public function run()
     {
-        if (!file_exists(TL_ROOT . 'system/languages/locallang.php')) {
+        if (!file_exists(TL_ROOT . '/system/languages/locallang.php')) {
             $file = new \File('system/languages/locallang.php');
-            $file->append('<?php' . "\n");
+            $file->write('<?php' . "\n");
             $file->close();
         }
     }
 }
 
-$controller = new RunonceController();
+$controller = new RunOnceController();
 $controller->run();
