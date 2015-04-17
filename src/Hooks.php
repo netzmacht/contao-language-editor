@@ -23,6 +23,8 @@ class Hooks
      */
     public function loadLanguageFile()
     {
-        include TL_ROOT . '/system/languages/locallang.php';
+        if (\Input::get('do') !== 'language-editor') {
+            include TL_ROOT . '/system/languages/locallang.php';
+        }
     }
 }
