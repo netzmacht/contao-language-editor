@@ -231,7 +231,7 @@ class LanguageVariableSearch
                 $files = new \RecursiveIteratorIterator(
                     new \RecursiveDirectoryIterator($path));
                 foreach ($files as $file) {
-                    if (preg_match('#/languages/\w\w/([^/]+)\.php#', $file->getPathname(), $match)
+                    if (preg_match('#/languages/\w\w/([^/]+)\.(php|xlf)#', $file->getPathname(), $match)
                         && $match[1] != 'countries'
                         && $match[1] != 'default'
                         && $match[1] != 'explain'
