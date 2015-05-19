@@ -228,8 +228,11 @@ class LanguageVariableSearch
         foreach ($modules as $module) {
             $path = TL_ROOT . '/system/modules/' . $module . '/languages';
             if (is_dir($path)) {
+                $flags = \FilesystemIterator::UNIX_PATHS | \FilesystemIterator::SKIP_DOTS;
                 $files = new \RecursiveIteratorIterator(
-                    new \RecursiveDirectoryIterator($path));
+                    new \RecursiveDirectoryIterator(str_replace('\\', '/', $path), $flags)
+                );
+
                 foreach ($files as $file) {
                     if (preg_match('#/languages/\w\w/([^/]+)\.(php|xlf)#', $file->getPathname(), $match)
                         && $match[1] != 'countries'
