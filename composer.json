@@ -22,6 +22,9 @@
     "contao/core":">=3.2,<3.6-dev",
     "contao-community-alliance/meta-palettes": "~1.5"
   },
+  "require-dev": {
+    "netzmacht/contao-build-tools": "~1.1"
+  },
   "autoload": {
     "psr-4": {
       "Netzmacht\\Contao\\LanguageEditor\\": "src/"
