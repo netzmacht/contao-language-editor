@@ -2,3 +2,8 @@
 .settings
 .buildpath
 .idea
+
+composer.lock
+
+vendor/
+bin/
