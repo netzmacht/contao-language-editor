@@ -14,7 +14,7 @@
 namespace Netzmacht\Contao\LanguageEditor;
 
 /**
- * Class LangPlainWidget
+ * Class LangPlainWidget is used to display the language var content as plain text.
  *
  * @copyright  InfinitySoft 2012
  * @author	   Tristan Lins <tristan.lins@infinitysoft.de>
@@ -23,7 +23,8 @@ namespace Netzmacht\Contao\LanguageEditor;
 class LangPlainWidget extends \Widget
 {
     /**
-     * Template
+     * The template name.
+     *
      * @var string
      */
     protected $strTemplate = 'be_widget';
@@ -31,9 +32,11 @@ class LangPlainWidget extends \Widget
     /**
      * Validate values.
      *
-     * @param mixed $varInput The widget input.
+     * @param mixed $varInput The widget input value.
      *
      * @return bool
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameters)
      */
     protected function validator($varInput)
     {

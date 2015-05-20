@@ -16,7 +16,7 @@ namespace Netzmacht\Contao\LanguageEditor;
 use File;
 
 /**
- * Class LanguageVariableSearch
+ * Class LanguageVariableSearch is the backend module handling the search request.
  *
  * @copyright  InfinitySoft 2012
  * @author     Tristan Lins <tristan.lins@infinitysoft.de>
@@ -25,22 +25,32 @@ use File;
 class LanguageVariableSearch
 {
     /**
+     * The language editor.
+     *
      * @var LanguageEditor
      */
-    protected $LanguageEditor;
+    protected $languageEditor;
 
     /**
+     * Language variable keys.
+     *
      * @var array
      */
     protected $languageVariableKeys = null;
 
+    /**
+     * Construct.
+     */
     public function __construct()
     {
-        $this->LanguageEditor = LanguageEditor::getInstance();
+        $this->languageEditor = LanguageEditor::getInstance();
     }
 
     /**
+     * Search for language variables.
+     *
      * @return string
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function searchLanguageVariable()
     {
@@ -55,37 +65,32 @@ class LanguageVariableSearch
             $_SESSION['tl_translation_search_language']    = \Input::post('language');
             $_SESSION['tl_translation_search_translation'] = \Input::post('translation');
 
-            $keyword      = html_entity_decode(\Input::post('keyword'), ENT_QUOTES | ENT_HTML401, 'UTF-8');
+            $keyword      = html_entity_decode(\Input::post('keyword'), (ENT_QUOTES | ENT_HTML401), 'UTF-8');
             $language     = \Input::post('language');
-            $translations = \Input::post('translation')
-                ? array(\Input::post('translation'))
-                : (\Input::post('translations')
-                    ? explode(',', \Input::post('translations'))
-                    : array_keys($GLOBALS['TL_TRANSLATION'])
-                );
+            $translations = $this->getTranslationsFromRequest();
 
-            $result       = array();
-            $results      = 0;
-            $keywordRgxp  = $this->getKeywordRegexp($keyword);
+            $result      = array();
+            $results     = 0;
+            $keywordRgxp = $this->getKeywordRegexp($keyword);
 
             $start = time();
-            $end   = ini_get('max_execution_time');
+            $end   = $this->calculateEndTime($start);
+            $count = count($translations);
 
-            if ($end > 0) {
-                $end = $start + 0.75 * $end;
-            } else {
-                $end = $start + 30;
-            }
-
-            while (time() < $end && count($translations) && !$results) {
-                $translation  = array_shift($translations);
+            while (time() < $end && $count && !$results) {
+                $translation          = array_shift($translations);
+                $count                = count($translations);
                 $result[$translation] = array();
 
-                \Controller::loadLanguageFile($this->LanguageEditor->getLanguageFileName($translation), $language, true);
+                \Controller::loadLanguageFile(
+                    $this->languageEditor->getLanguageFileName($translation),
+                    $language,
+                    true
+                );
 
-                if (isset($GLOBALS['TL_LANG'][$translation]) && isset($GLOBALS['TL_TRANSLATION'][$translation])) {
-                    foreach ($GLOBALS['TL_TRANSLATION'][$translation] as $path => $config) {
-                        $value = $this->LanguageEditor->getLangValue($GLOBALS['TL_LANG'], explode('|', $path), true);
+                if ($this->existsTranslation($translation)) {
+                    foreach (array_keys($GLOBALS['TL_TRANSLATION'][$translation]) as $path) {
+                        $value = $this->languageEditor->getLangValue($GLOBALS['TL_LANG'], explode('|', $path), true);
 
                         $this->matchResults($value, $keywordRgxp, $result, $results, $translation, $path);
                     }
@@ -106,31 +111,22 @@ class LanguageVariableSearch
     }
 
     /**
+     * Build language variables key files.
+     *
      * @return string
+     * @SuppressWarnings(PHPMD.Superglobals)
+     * @SuppressWarnings(PHPMD.ExitExpression)
      */
     public function buildLanguageVariableKeys()
     {
         $template = new \BackendTemplate('be_translation_search_build_keys');
 
         if (\Input::post('FORM_SUBMIT') == 'tl_translation_search_build_keys') {
-            // clean old files
-            if (\Input::post('clean')) {
-                $files = new \RegexIterator(
-                    new \DirectoryIterator(TL_ROOT . '/system/languages/'),
-                    '#^langkeys\..*\.php$#'
-                );
+            $this->cleanTranslationFiles();
 
-                foreach ($files as $file) {
-                    $file = new File('system/languages/' . $file->getFilename());
-                    $file->delete();
-                }
-            }
+            $template->translations = $this->getTranslations();
 
-            $translations = $this->getTranslations();
-
-            if (count($translations)) {
-                $template->translations = $translations;
-            } else {
+            if (!$template->translations) {
                 $_SESSION['TL_INFO'][] = $GLOBALS['TL_LANG']['tl_translation']['nothingtodo'];
                 \Controller::reload();
             }
@@ -147,20 +143,22 @@ class LanguageVariableSearch
 ");
 
             // load the language
-            \Controller::loadLanguageFile($this->LanguageEditor->getLanguageFileName($translation));
+            \Controller::loadLanguageFile($this->languageEditor->getLanguageFileName($translation));
 
             if (is_array($GLOBALS['TL_LANG'][$translation])) {
                 $this->languageVariableKeys = array();
 
-                $this->buildLanguageVariableKeysFrom($translation,
+                $this->buildLanguageVariableKeysFrom(
                     $translation,
-                    $GLOBALS['TL_LANG'][$translation]);
+                    $translation,
+                    $GLOBALS['TL_LANG'][$translation]
+                );
 
                 ksort($this->languageVariableKeys);
 
                 foreach ($this->languageVariableKeys as $translation => $v) {
                     foreach ($v as $path => $config) {
-                        $key   = "\$GLOBALS['TL_TRANSLATION']['$translation']['$path']";
+                        $key   = sprintf('$GLOBALS[\'TL_TRANSLATION\'][\'%s\'][\'%s\']', $translation, $path);
                         $value = var_export($config, true);
 
                         $file->append($key . ' = ' . $value . ";\n");
@@ -198,6 +196,7 @@ class LanguageVariableSearch
      * @param string $language    The language.
      *
      * @return void
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     protected function buildLanguageVariableKeysFrom($translation, $path, $language)
     {
@@ -218,6 +217,11 @@ class LanguageVariableSearch
         }
     }
 
+    /**
+     * Get all available translations based on the used language files.
+     *
+     * @return array
+     */
     protected function getTranslations()
     {
         $translations = array();
@@ -227,19 +231,16 @@ class LanguageVariableSearch
         foreach ($modules as $module) {
             $path = TL_ROOT . '/system/modules/' . $module . '/languages';
             if (is_dir($path)) {
-                $flags = \FilesystemIterator::UNIX_PATHS | \FilesystemIterator::SKIP_DOTS;
+                $flags = (\FilesystemIterator::UNIX_PATHS | \FilesystemIterator::SKIP_DOTS);
                 $files = new \RecursiveIteratorIterator(
                     new \RecursiveDirectoryIterator(str_replace('\\', '/', $path), $flags)
                 );
 
                 foreach ($files as $file) {
                     if (preg_match('#/languages/\w\w/([^/]+)\.(php|xlf)#', $file->getPathname(), $match)
-                        && $match[1] != 'countries'
-                        && $match[1] != 'default'
-                        && $match[1] != 'explain'
-                        && $match[1] != 'languages'
-                        && $match[1] != 'modules'
-                        && !in_array($match[1], $translations)) {
+                        && !in_array($match[1], array('countries', 'default', 'explain', 'languages', 'modules'))
+                        && !in_array($match[1], $translations)
+                    ) {
                         $translations[] = $match[1];
                     }
                 }
@@ -288,12 +289,14 @@ class LanguageVariableSearch
     /**
      * Match search results.
      *
-     * @param $value
-     * @param $keywordRgxp
-     * @param $result
-     * @param $results
-     * @param $translation
-     * @param $path
+     * @param mixed  $value       The value to search.
+     * @param string $keywordRgxp The regex for the current keyword.
+     * @param array  $result      The result array.
+     * @param int    $results     The counted results.
+     * @param string $translation The translation domain.
+     * @param string $path        The translation path.
+     *
+     * @return void
      */
     private function matchResults($value, $keywordRgxp, &$result, &$results, $translation, $path)
     {
@@ -309,6 +312,80 @@ class LanguageVariableSearch
 
         foreach ($value as $v) {
             $this->matchResults($v, $keywordRgxp, $result, $results, $translation, $path);
+        }
+    }
+
+    /**
+     * Get the translations from the http request.
+     *
+     * @return array
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
+     */
+    private function getTranslationsFromRequest()
+    {
+        return \Input::post('translation')
+            ? array(\Input::post('translation'))
+            : (\Input::post('translations')
+            ? explode(',', \Input::post('translations'))
+            : array_keys($GLOBALS['TL_TRANSLATION'])
+        );
+    }
+
+    /**
+     * Calculate the end time of the timeout depending on start time and max execition time.
+     *
+     * @param int $start The start timestamp.
+     *
+     * @return string
+     */
+    private function calculateEndTime($start)
+    {
+        $end = ini_get('max_execution_time');
+
+        if ($end > 0) {
+            $end = ($start + 0.75 * $end);
+
+            return $end;
+        } else {
+            $end = ($start + 30);
+
+            return $end;
+        }
+    }
+
+    /**
+     * Check if an translation exists as language and translation keys.
+     *
+     * @param string $translation The translation domain.
+     *
+     * @return bool
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
+     */
+    private function existsTranslation($translation)
+    {
+        return isset($GLOBALS['TL_LANG'][$translation]) && isset($GLOBALS['TL_TRANSLATION'][$translation]);
+    }
+
+    /**
+     * Clean the translation file if the post param clean is given.
+     *
+     * @return void
+     */
+    private function cleanTranslationFiles()
+    {
+        // clean old files
+        if (\Input::post('clean')) {
+            $files = new \RegexIterator(
+                new \DirectoryIterator(TL_ROOT . '/system/languages/'),
+                '#^langkeys\..*\.php$#'
+            );
+
+            foreach ($files as $file) {
+                $file = new File('system/languages/' . $file->getFilename());
+                $file->delete();
+            }
         }
     }
 }

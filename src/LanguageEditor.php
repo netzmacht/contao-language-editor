@@ -14,7 +14,7 @@
 namespace Netzmacht\Contao\LanguageEditor;
 
 /**
- * Class LanguageVariableSearch
+ * Language editor class.
  *
  * @copyright  InfinitySoft 2012, netzmacht creative 2015
  * @author     Tristan Lins <tristan.lins@infinitysoft.de>
@@ -29,6 +29,7 @@ class LanguageEditor extends \Backend
      * @var array
      */
     public static $defaultGroups = array(
+        // @codingStandardsIgnoreStart
         'CNT'    => 'countries', // countries
         'ERR'    => 'default',   // Error messages
         'PTY'    => 'default',   // Page types
@@ -44,15 +45,20 @@ class LanguageEditor extends \Backend
         'SEC'    => 'default',   // Security questions
         'CTE'    => 'default',   // Content elements
         'FMD'    => 'default'    // Front end modules
+        // @codingStandardsIgnoreEnd
     );
 
     /**
-     * Singleton instance
+     * Singleton instance.
+     *
+     * @var LanguageEditor
      */
     protected static $objInstance = null;
 
     /**
-     * Get singleton instance
+     * Get singleton instance.
+     *
+     * @return LanguageEditor
      */
     public static function getInstance()
     {
@@ -64,9 +70,11 @@ class LanguageEditor extends \Backend
     }
 
     /**
-     * singleton constructor
+     * Singleton constructor.
      */
-    protected function __construct() {}
+    protected function __construct()
+    {
+    }
 
     /**
      * Get the language file name for a language group.
@@ -148,12 +156,12 @@ class LanguageEditor extends \Backend
     public function plainEncode($varValue)
     {
         if (is_array($varValue)) {
-            foreach ($varValue as $k=>$v) {
+            foreach ($varValue as $k => $v) {
                 $varValue[$k] = $this->plainEncode($v);
             }
             return $varValue;
         } else {
-            return htmlentities($varValue, ENT_QUOTES | ENT_HTML401, 'UTF-8');
+            return htmlentities($varValue, (ENT_QUOTES | ENT_HTML401), 'UTF-8');
         }
     }
 }

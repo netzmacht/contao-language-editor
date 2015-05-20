@@ -30,7 +30,7 @@ class Translation extends \Backend
      *
      * @var LanguageEditor
      */
-    protected $LanguageEditor;
+    protected $languageEditor;
 
     /**
      * Construct.
@@ -40,7 +40,7 @@ class Translation extends \Backend
         parent::__construct();
         $this->import('BackendUser', 'User');
 
-        $this->LanguageEditor = LanguageEditor::getInstance();
+        $this->languageEditor = LanguageEditor::getInstance();
         $this->loadTranslationKeys();
     }
 
@@ -51,21 +51,22 @@ class Translation extends \Backend
      * @param string $label The default label.
      *
      * @return string
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function getLabel($row, $label)
     {
         if ($row['backend'] && $row['frontend']) {
             $label = 'BE+FE ' . $label;
-        } else if ($row['backend']) {
+        } elseif ($row['backend']) {
             $label = 'BE ' . $label;
-        } else if ($row['frontend']) {
+        } elseif ($row['frontend']) {
             $label = 'FE ' . $label;
         } else {
             $label = \Image::getHtml('system/themes/' . $this->getTheme() . '/images/invisible.gif', '');
         }
 
         list($group, $path) = explode('::', $row['langvar'], 2);
-        $path = (!preg_match('#^' . preg_quote($group) . '|#', $path) ? $group . '.' : '') . str_replace('|', '.', $path);
+        $path               = $this->formatPath($group, $path);
 
         if (empty($GLOBALS['TL_TRANSLATION'][$group][$path]['label'])) {
             $label .= ' <strong>' . $path . '</strong>';
@@ -79,10 +80,13 @@ class Translation extends \Backend
         }
 
         if (is_array($varContent)) {
-            $label .= '<pre class="translation_content">' . '&ndash; ';
-            $label .= implode('<br>&ndash; ', array_map(array($this->LanguageEditor, 'plainEncode'), $varContent)) . '</pre>';
+            $label .= '<pre class="translation_content">&ndash; ';
+            $label .= implode('<br>&ndash; ', array_map(array($this->languageEditor, 'plainEncode'), $varContent));
+            $label .= '</pre>';
+
+            return $label;
         } else {
-            $label .= '<pre class="translation_content">' . $this->LanguageEditor->plainEncode($varContent) . '</pre>';
+            $label .= '<pre class="translation_content">' . $this->languageEditor->plainEncode($varContent) . '</pre>';
         }
 
         return $label;
@@ -91,11 +95,11 @@ class Translation extends \Backend
     /**
      * Load the translation.
      *
-     * @param DataContainer $dc The data container driver.
+     * @param \DataContainer $dataContainer The data container driver.
      *
      * @return void
      */
-    public function loadTranslation(\DataContainer $dc)
+    public function loadTranslation(\DataContainer $dataContainer)
     {
         $session     = Session::getInstance();
         $sessionData = $session->get('tl_translation');
@@ -109,8 +113,8 @@ class Translation extends \Backend
         }
 
         $translation = \Database::getInstance()
-            ->prepare("SELECT * FROM tl_translation WHERE id=?")
-            ->execute($dc->id);
+            ->prepare('SELECT * FROM tl_translation WHERE id=?')
+            ->execute($dataContainer->id);
 
         if ($translation->next()) {
             $this->prepareDca($translation);
@@ -120,21 +124,21 @@ class Translation extends \Backend
     /**
      * Save the lang group during saving the lang var.
      *
-     * @param mixed         $value The lang var value.
-     * @param DataContainer $dc    The data container driver.
+     * @param mixed          $value         The lang var value.
+     * @param \DataContainer $dataContainer The data container driver.
      *
      * @return mixed
      */
-    public function saveLangGroup($value, \DataContainer $dc)
+    public function saveLangGroup($value, \DataContainer $dataContainer)
     {
         $langGroup = preg_replace('#^([^:]+)::.*$#', '$1', $value);
 
         \Database::getInstance()
             ->prepare('UPDATE tl_translation %s WHERE id=?')
             ->set(array('langgroup' => $langGroup))
-            ->execute($dc->id);
+            ->execute($dataContainer->id);
 
-        $dc->activeRecord->langgroup = $langGroup;
+        $dataContainer->activeRecord->langgroup = $langGroup;
 
         return $value;
     }
@@ -142,19 +146,20 @@ class Translation extends \Backend
     /**
      * Get all language variable options.
      *
-     * @param DataContainer $dc The data container driver.
-     *
      * @return array
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
-    public function getLanguageVariablesOptions(DataContainer $dc)
+    public function getLanguageVariablesOptions()
     {
         $options = array();
         foreach ($GLOBALS['TL_TRANSLATION'] as $group => $keys) {
             $options[$group] = array();
             foreach ($keys as $key => $config) {
                 if (!empty($config['type'])) {
-                    $strPath = (!preg_match('#^' . preg_quote($group) . '|#', $key) ? $group . '.' : '') . str_replace('|', '.', $key);
-                    $options[$group][$group . '::' . $key] = '[' . $strPath . ']'
+                    $path  = (!preg_match('#^' . preg_quote($group) . '|#', $key) ? $group . '.' : '');
+                    $path .= str_replace('|', '.', $key);
+
+                    $options[$group][$group . '::' . $key] = '[' . $path . ']'
                         . (isset($config['label']) ? ' ' . $config['label'] : '');
                 }
             }
@@ -165,30 +170,44 @@ class Translation extends \Backend
     /**
      * Load the default lang value.
      *
-     * @param mixed         $value The lang var value.
-     * @param DataContainer $dc    The data container driver.
+     * @param mixed          $value         The lang var value.
+     * @param \DataContainer $dataContainer The data container driver.
      *
      * @return array|string
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameters)
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
-    public function loadDefault($value, DataContainer $dc)
+    public function loadDefault($value, \DataContainer $dataContainer)
     {
-        return strlen($dc->activeRecord->langvar)
-            ? $this->LanguageEditor->getLangValue($GLOBALS['TL_LANG'], explode('|', preg_replace('#^[^:]+::#', '', $dc->activeRecord->langvar)))
-            : '';
+        if (strlen($dataContainer->activeRecord->langvar)) {
+            return $this->languageEditor->getLangValue(
+                $GLOBALS['TL_LANG'],
+                explode('|', preg_replace('#^[^:]+::#', '', $dataContainer->activeRecord->langvar))
+            );
+        }
+
+        return '';
     }
 
     /**
      * Loa the content.
      *
-     * @param mixed         $value The lang var value.
-     * @param DataContainer $dc    The data container driver.
+     * @param mixed          $value         The lang var value.
+     * @param \DataContainer $dataContainer The data container driver.
      *
      * @return array|string
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
-    public function loadContent($value, DataContainer $dc)
+    public function loadContent($value, \DataContainer $dataContainer)
     {
-        if (empty($value) && strlen($dc->activeRecord->langvar)) {
-            return $this->LanguageEditor->getLangValue($GLOBALS['TL_LANG'], explode('|', preg_replace('#^[^:]+::#', '', $dc->activeRecord->langvar)), true);
+        if (empty($value) && strlen($dataContainer->activeRecord->langvar)) {
+            return $this->languageEditor->getLangValue(
+                $GLOBALS['TL_LANG'],
+                explode('|', preg_replace('#^[^:]+::#', '', $dataContainer->activeRecord->langvar)),
+                true
+            );
         } else {
             return $value;
         }
@@ -231,16 +250,16 @@ class Translation extends \Backend
 */
 ");
 
-        foreach ($translations as $strLanguage=>$arrLangTranslations) {
+        foreach ($translations as $strLanguage => $arrLangTranslations) {
             $objFile->append(sprintf("if (\$GLOBALS['TL_LANGUAGE'] == %s) {", var_export($strLanguage, true)));
 
-            foreach ($arrLangTranslations['both'] as $variable=>$strValue) {
+            foreach ($arrLangTranslations['both'] as $variable => $strValue) {
                 $objFile->append(sprintf("\t%s = %s;", $variable, $strValue));
             }
 
             if (count($arrLangTranslations['be'])) {
                 $objFile->append("\tif (TL_MODE == 'BE') {");
-                foreach ($arrLangTranslations['be'] as $variable=>$strValue) {
+                foreach ($arrLangTranslations['be'] as $variable => $strValue) {
                     $objFile->append(sprintf("\t\t%s = %s;", $variable, $strValue));
                 }
                 $objFile->append("\t}");
@@ -248,13 +267,13 @@ class Translation extends \Backend
 
             if (count($arrLangTranslations['fe'])) {
                 $objFile->append("\tif (TL_MODE=='FE') {");
-                foreach ($arrLangTranslations['fe'] as $variable=>$strValue) {
+                foreach ($arrLangTranslations['fe'] as $variable => $strValue) {
                     $objFile->append(sprintf("\t\t%s = %s;", $variable, $strValue));
                 }
                 $objFile->append("\t}");
             }
 
-            $objFile->append("}");
+            $objFile->append('}');
         }
     }
 
@@ -304,6 +323,7 @@ class Translation extends \Backend
      * Load the translations keys.
      *
      * @return void
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     private function loadTranslationKeys()
     {
@@ -323,15 +343,14 @@ class Translation extends \Backend
      * @param \Database\Result $translation The translation.
      *
      * @return void
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     private function prepareDca($translation)
     {
         list($group, $path) = explode('::', $translation->langvar, 2);
 
         $this->loadLanguageFile(
-            isset(LanguageEditor::$defaultGroups[$group])
-                ? LanguageEditor::$defaultGroups[$group]
-                : $group,
+            isset(LanguageEditor::$defaultGroups[$group]) ? LanguageEditor::$defaultGroups[$group] : $group,
             $translation->language,
             true
         );
@@ -340,8 +359,9 @@ class Translation extends \Backend
             $arrConfig = $GLOBALS['TL_TRANSLATION'][$group][$path];
 
             switch ($arrConfig['type']) {
+                default:
                 case 'legend':
-                    // do nothing, use default config
+                    // Do nothing here, use default config instead
                     break;
 
                 case 'inputField':
@@ -354,5 +374,22 @@ class Translation extends \Backend
                     break;
             }
         }
+    }
+
+    /**
+     * Format the lang var path.
+     *
+     * @param string $group The group name.
+     * @param string $path  The path name.
+     *
+     * @return string
+     */
+    private function formatPath($group, $path)
+    {
+        return (!preg_match('#^' . preg_quote($group) . '|#', $path) ? $group . '.' : '') . str_replace(
+            '|',
+            '.',
+            $path
+        );
     }
 }

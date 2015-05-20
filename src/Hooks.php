@@ -14,7 +14,7 @@
 namespace Netzmacht\Contao\LanguageEditor;
 
 /**
- * Class Hooks
+ * Class Hooks.
  *
  * @package Netzmacht\Contao\LanguageEditor
  */
@@ -22,6 +22,8 @@ class Hooks
 {
     /**
      * Load the language file of the langauge editor.
+     *
+     * @return void
      */
     public function loadLanguageFile()
     {
