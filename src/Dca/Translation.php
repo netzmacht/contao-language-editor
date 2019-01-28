@@ -1,14 +1,13 @@
 <?php
 
 /**
- * Language editor
- * Copyright (C) 2010,2011 Tristan Lins, 2015 David Molineus
+ * Contao Language editor
  *
- * @copyright  InfinitySoft 2012, netzmacht creative 2015
- * @author     David Molineus <david.molineus@netzmacht.de>
- * @author     Fritz Michael Gschwantner <fmg@inspiredminds.at>
  * @package    Language Editor
- * @license    LGPL
+ * @author     David Molineus <david.molineus@netzmacht.de>
+ * @copyright  2012 InfinitySoft 2012
+ * @copyright  2015-2019 netzmacht David Molineus
+ * @license    LGPL-3.0-or-later https://github.com/netzmacht/contao-language-editor/blob/master/LICENSE
  * @filesource
  */
 
@@ -52,6 +51,7 @@ class Translation extends \Backend
      * @param string $label The default label.
      *
      * @return string
+     *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function getLabel($row, $label)
@@ -148,6 +148,7 @@ class Translation extends \Backend
      * Get all language variable options.
      *
      * @return array
+     *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function getLanguageVariablesOptions()
@@ -326,6 +327,7 @@ class Translation extends \Backend
      * Load the translations keys.
      *
      * @return void
+     *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
     private function loadTranslationKeys()
@@ -346,6 +348,7 @@ class Translation extends \Backend
      * @param \Database\Result $translation The translation.
      *
      * @return void
+     *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
     private function prepareDca($translation)

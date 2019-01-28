@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Language editor
- * Copyright (C) 2010,2011 Tristan Lins, 2015 David Molineus
+ * Contao Language editor
  *
- * @copyright  InfinitySoft 2012, netzmacht creative 2015
- * @author     David Molineus <david.molineus@netzmacht.de>
  * @package    Language Editor
- * @license    LGPL
+ * @author     David Molineus <david.molineus@netzmacht.de>
+ * @copyright  2012 InfinitySoft 2012
+ * @copyright  2015-2019 netzmacht David Molineus
+ * @license    LGPL-3.0-or-later https://github.com/netzmacht/contao-language-editor/blob/master/LICENSE
  * @filesource
  */
 
@@ -16,11 +16,7 @@ namespace Netzmacht\Contao\LanguageEditor;
 use File;
 
 /**
- * Class LanguageVariableSearch is the backend module handling the search request.
- *
- * @copyright  InfinitySoft 2012
- * @author     Tristan Lins <tristan.lins@infinitysoft.de>
- * @package    Language Editor
+ * Class LanguageVariableSearch is the backend module handling the search request
  */
 class LanguageVariableSearch
 {
@@ -36,7 +32,7 @@ class LanguageVariableSearch
      *
      * @var array
      */
-    protected $languageVariableKeys = null;
+    protected $languageVariableKeys;
 
     /**
      * Construct.
@@ -50,6 +46,7 @@ class LanguageVariableSearch
      * Search for language variables.
      *
      * @return string
+     *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function searchLanguageVariable()
@@ -114,6 +111,7 @@ class LanguageVariableSearch
      * Build language variables key files.
      *
      * @return string
+     *
      * @SuppressWarnings(PHPMD.Superglobals)
      * @SuppressWarnings(PHPMD.ExitExpression)
      */
@@ -196,6 +194,7 @@ class LanguageVariableSearch
      * @param string $language    The language.
      *
      * @return void
+     *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
     protected function buildLanguageVariableKeysFrom($translation, $path, $language)

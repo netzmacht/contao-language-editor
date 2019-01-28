@@ -1,18 +1,16 @@
 <?php
 
 /**
- * Language editor
- * Copyright (C) 2010,2011 Tristan Lins, 2015 David Molineus
+ * Contao Language editor
  *
- * @copyright  InfinitySoft 2012, netzmacht creative 2015
- * @author     Tristan Lins <tristan.lins@infinitysoft.de>
+ * @package    Language Editor
  * @author     David Molineus <david.molineus@netzmacht.de>
  * @author     Fritz Michael Gschwantner <fmg@inspiredminds.at>
- * @package    Language Editor
- * @license    LGPL
+ * @copyright  2012 InfinitySoft 2012
+ * @copyright  2015-2019 netzmacht David Molineus
+ * @license    LGPL-3.0-or-later https://github.com/netzmacht/contao-language-editor/blob/master/LICENSE
  * @filesource
  */
-
 
 /**
  * Table tl_translation
