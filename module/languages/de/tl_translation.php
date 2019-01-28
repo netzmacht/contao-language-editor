@@ -7,6 +7,7 @@
  * @copyright  InfinitySoft 2012, netzmacht creative 2015
  * @author     Tristan Lins <tristan.lins@infinitysoft.de>
  * @author     David Molineus <david.molineus@netzmacht.de>
+ * @author     Fritz Michael Gschwantner <fmg@inspiredminds.at>
  * @package    Language Editor
  * @license    LGPL
  * @filesource
