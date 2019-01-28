@@ -7,6 +7,7 @@
  * @copyright  InfinitySoft 2012, netzmacht creative 2015
  * @author     Tristan Lins <tristan.lins@infinitysoft.de>
  * @author     David Molineus <david.molineus@netzmacht.de>
+ * @author     Fritz Michael Gschwantner <fmg@inspiredminds.at>
  * @package    Language Editor
  * @license    LGPL
  * @filesource
@@ -35,7 +36,16 @@ $GLOBALS['TL_DCA']['tl_translation'] = array
         'ondelete_callback' => array
         (
             array('Netzmacht\Contao\LanguageEditor\Dca\Translation', 'markUpdate')
-        )
+        ),
+        'sql' => array
+        (
+            'keys' => array
+            (
+                'id' => 'primary',
+                'langgroup' => 'index',
+                'langvar' => 'index',
+            ),
+        ),
     ),
 
     // List
@@ -120,11 +130,20 @@ $GLOBALS['TL_DCA']['tl_translation'] = array
     // Fields
     'fields' => array
     (
+        'id' => array
+        (
+            'sql' => 'int(10) unsigned NOT NULL auto_increment',
+        ),
+        'tstamp' => array
+        (
+            'sql' => "int(10) unsigned NOT NULL default '0'",
+        ),
         'langgroup' => array
         (
             'label'                   => &$GLOBALS['TL_LANG']['tl_translation']['langgroup'],
             'filter'                  => true,
             'inputType'               => 'text',
+            'sql'                     => "varchar(255) NOT NULL default ''",
         ),
         'langvar' => array
         (
@@ -144,7 +163,8 @@ $GLOBALS['TL_DCA']['tl_translation'] = array
                 'submitOnChange'     => true,
                 'tl_class'           => 'w50',
                 'alwaysSave'         => true,
-            )
+            ),
+            'sql'              => "varchar(255) NULL",
         ),
         'language' => array
         (
@@ -153,7 +173,8 @@ $GLOBALS['TL_DCA']['tl_translation'] = array
             'filter'                  => true,
             'inputType'               => 'select',
             'options'                 => $this->getLanguages(),
-            'eval'                    => array('mandatory'=>true, 'chosen'=>true, 'submitOnChange'=>true, 'tl_class'=>'w50')
+            'eval'                    => array('mandatory'=>true, 'chosen'=>true, 'submitOnChange'=>true, 'tl_class'=>'w50'),
+            'sql'                     => "char(2) NOT NULL default ''",
         ),
         'backend' => array
         (
@@ -161,7 +182,8 @@ $GLOBALS['TL_DCA']['tl_translation'] = array
             'default'                 => true,
             'filter'                  => true,
             'inputType'               => 'checkbox',
-            'eval'                    => array('tl_class'=>'w50')
+            'eval'                    => array('tl_class'=>'w50'),
+            'sql'                     => "char(1) NOT NULL default ''",
         ),
         'frontend' => array
         (
@@ -169,7 +191,8 @@ $GLOBALS['TL_DCA']['tl_translation'] = array
             'default'                 => true,
             'filter'                  => true,
             'inputType'               => 'checkbox',
-            'eval'                    => array('tl_class'=>'w50')
+            'eval'                    => array('tl_class'=>'w50'),
+            'sql'                     => "char(1) NOT NULL default ''",
         ),
         'default' => array
         (
@@ -188,7 +211,8 @@ $GLOBALS['TL_DCA']['tl_translation'] = array
             'eval'                    => array('tl_class'=>'clr long', 'includeBlankOption'=>true, 'allowHtml'=>true, 'preserveTags'=>true),
             'load_callback'           => array(
                 array('Netzmacht\Contao\LanguageEditor\Dca\Translation', 'loadContent')
-            )
+            ),
+            'sql'                     => "blob NULL",
         )
     )
 );

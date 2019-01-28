@@ -7,6 +7,7 @@
  * @copyright  InfinitySoft 2012, netzmacht creative 2015
  * @author     Tristan Lins <tristan.lins@infinitysoft.de>
  * @author     David Molineus <david.molineus@netzmacht.de>
+ * @author     Fritz Michael Gschwantner <fmg@inspiredminds.at>
  * @package    Language Editor
  * @license    LGPL
  * @filesource
@@ -53,7 +54,7 @@ $GLOBALS['TL_LANG']['tl_translation']['require_backend_frontend'] = 'Sie müssen
  * Search
  */
 $GLOBALS['TL_LANG']['tl_translation']['keyword']  = array('Zeichenkette', 'Geben Sie hier die zu suchende Zeichenkette ein. Diese darf auch HTML beinhalten.');
-$GLOBALS['TL_LANG']['tl_translation']['empty']    = 'In diese Gruppe wurde nichts gefunden';
+$GLOBALS['TL_LANG']['tl_translation']['empty']    = 'In dieser Gruppe wurde nichts gefunden';
 $GLOBALS['TL_LANG']['tl_translation']['back']     = 'Zurück';
 $GLOBALS['TL_LANG']['tl_translation']['continue'] = 'Weitersuchen';
 $GLOBALS['TL_LANG']['tl_translation']['dosearch'] = 'Suchen';

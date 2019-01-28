@@ -3,7 +3,7 @@
   "description":"Contao langauge editor",
   "keywords":["contao", "language editor", "language"],
   "type":"contao-module",
-  "license":"LGPL-3.0+",
+  "license":"LGPL-3.0-or-later",
   "authors":[
     {
       "name":"David Molineus",
@@ -18,8 +18,9 @@
     "source":"https://github.com/netzmacht/contao-language-editor"
   },
   "require":{
-    "php":">=5.4",
-    "contao/core":">=3.2,<3.6-dev",
+    "php": ">=5.6",
+    "contao/core-bundle": "^3.2 || ^4.4",
+    "contao-community-alliance/composer-plugin": "^2.4 || ^3.0",
     "contao-community-alliance/meta-palettes": "~1.5"
   },
   "require-dev": {
@@ -30,11 +31,6 @@
       "Netzmacht\\Contao\\LanguageEditor\\": "src/"
     }
   },
-  "config": {
-    "bin-dir": "bin"
-  },
-  "prefer-stable": true,
-  "minimum-stability": "dev",
   "extra":{
     "branch-alias": {
       "dev-master": "1.0.x-dev"

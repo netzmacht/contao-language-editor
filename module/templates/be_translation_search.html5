@@ -26,7 +26,7 @@
                 <fieldset class="tl_box block translation_update">
                     <legend><?php echo $group; ?></legend>
                     <?php if (count($result)): foreach ($result as $k=>$v): ?>
-                        <div>
+                        <div class="widget long">
                             <h3>
                                 <a href="contao/main.php?do=language-editor&amp;act=create&amp;langvar=<?php echo rawurlencode(specialchars($group . '::' . $k)); ?>&amp;language=<?php echo $_SESSION['tl_translation_search_language']; ?>&amp;rt=<?php echo RequestToken::get(); ?>">
                                     <?php echo str_replace('|', '.', $k); ?>
@@ -42,22 +42,22 @@
                                 ?></pre>
                         </div>
                     <?php endforeach; else: ?>
-                        <div>
-                            <?php echo $GLOBALS['TL_LANG']['tl_translation']['empty']; ?>
+                        <div class="widget long">
+                            <span><?php echo $GLOBALS['TL_LANG']['tl_translation']['empty']; ?></span>
                         </div>
                     <?php endif; ?>
                 </fieldset>
             <?php endforeach; ?>
         <?php else: ?>
             <fieldset class="tl_tbox block">
-                <div class="long">
+                <div class="widget long">
                     <h3>
                         <label for="ctrl_keyword"><?php echo $GLOBALS['TL_LANG']['tl_translation']['keyword'][0]; ?></label>
                     </h3>
                     <input type="text" name="keyword" id="ctrl_keyword" class="tl_text" value="<?php echo $_SESSION['tl_translation_search_keyword']; ?>" onfocus="Backend.getScrollOffset();">
                     <p class="tl_help tl_tip"><?php echo $GLOBALS['TL_LANG']['tl_translation']['keyword'][1]; ?></p>
                 </div>
-                <div class="clr w50">
+                <div class="widget clr w50">
                     <h3>
                         <label for="ctrl_language"><?php echo $GLOBALS['TL_LANG']['tl_translation']['language'][0]; ?></label>
                     </h3>
@@ -68,7 +68,7 @@
                     </select>
                     <p class="tl_help tl_tip"><?php echo $GLOBALS['TL_LANG']['tl_translation']['language'][1]; ?></p>
                 </div>
-                <div class="w50">
+                <div class="widget w50">
                     <h3>
                         <label for="ctrl_translation"><?php echo $GLOBALS['TL_LANG']['tl_translation']['langgroup'][0]; ?></label>
                     </h3>
