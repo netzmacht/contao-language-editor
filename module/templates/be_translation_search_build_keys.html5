@@ -29,17 +29,21 @@
         <?php else: ?>
             <fieldset class="tl_tbox block">
                 <legend><?php echo $GLOBALS['TL_LANG']['tl_translation']['statistic']; ?></legend>
-                <div class="w50">
+                <div class="widget w50">
                     <div class="tl_checkbox_single_container">
-                        <strong><?php echo $GLOBALS['TL_LANG']['tl_translation']['groupCount']; ?>:</strong>
-                        <?php echo count($GLOBALS['TL_TRANSLATION']); ?>
+                        <span>
+                            <strong><?php echo $GLOBALS['TL_LANG']['tl_translation']['groupCount']; ?>:</strong>
+                            <?php echo count($GLOBALS['TL_TRANSLATION']); ?>
+                        </span>
                     </div>
                     <div>
-                        <strong><?php echo $GLOBALS['TL_LANG']['tl_translation']['langvarCount']; ?>:</strong>
-                        <?php echo array_sum(array_map('count', $GLOBALS['TL_TRANSLATION'])); ?>
+                        <span>
+                            <strong><?php echo $GLOBALS['TL_LANG']['tl_translation']['langvarCount']; ?>:</strong>
+                            <?php echo array_sum(array_map('count', $GLOBALS['TL_TRANSLATION'])); ?>
+                        </span>
                     </div>
                 </div>
-                <div class="w50">
+                <div class="widget w50">
                     <div class="tl_checkbox_single_container">
                         <input type="checkbox" id="ctrl_clean" name="clean" value="1">
                         <label for="ctrl_clean"><?php echo $GLOBALS['TL_LANG']['tl_translation']['clean'][0]; ?></label>

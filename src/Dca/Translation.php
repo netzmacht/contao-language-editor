@@ -275,6 +275,8 @@ class Translation extends \Backend
 
             $objFile->append('}');
         }
+
+        $objFile->close();
     }
 
     /**
