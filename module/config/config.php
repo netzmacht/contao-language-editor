@@ -4,6 +4,7 @@
  * Contao Language editor
  *
  * @package    Language Editor
+ * @author     Tristan Lins <tristan.lins@infinitysoft.de>
  * @author     David Molineus <david.molineus@netzmacht.de>
  * @copyright  2012 InfinitySoft 2012
  * @copyright  2015-2019 netzmacht David Molineus
