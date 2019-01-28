@@ -1,47 +1,52 @@
 {
-  "name":"netzmacht/contao-language-editor",
-  "description":"Contao langauge editor",
-  "keywords":["contao", "language editor", "language"],
-  "type":"contao-module",
-  "license":"LGPL-3.0-or-later",
-  "authors":[
+  "name": "netzmacht/contao-language-editor",
+  "type": "contao-module",
+  "description": "Contao langauge editor",
+  "keywords": [
+    "contao",
+    "language editor",
+    "language"
+  ],
+  "license": "LGPL-3.0-or-later",
+  "authors": [
     {
-      "name":"David Molineus",
-      "email":"mail@netzmacht.de",
-      "homepage":"http://www.netzmacht.de",
-      "role":"Developer"
+      "name": "David Molineus",
+      "email": "mail@netzmacht.de",
+      "homepage": "http://www.netzmacht.de",
+      "role": "Developer"
     }
   ],
-  "support":{
-    "email":"mail@netzmacht.de",
-    "issues":"https://github.com/netzmacht/contao-language-editor/issues",
-    "source":"https://github.com/netzmacht/contao-language-editor"
-  },
-  "require":{
+  "require": {
     "php": ">=5.6",
-    "contao/core-bundle": "^3.5 || ^4.4",
     "contao-community-alliance/composer-plugin": "^2.4 || ^3.0",
-    "contao-community-alliance/meta-palettes": "~1.5"
+    "contao-community-alliance/meta-palettes": "~1.5",
+    "contao/core-bundle": "^3.5 || ^4.4"
   },
   "require-dev": {
+    "php-http/guzzle6-adapter": "^1.1",
     "phpcq/all-tasks": "^1.2"
   },
-  "autoload": {
-    "psr-4": {
-      "Netzmacht\\Contao\\LanguageEditor\\": "src/"
-    }
-  },
-  "extra":{
+  "extra": {
     "branch-alias": {
       "dev-master": "1.0.x-dev"
     },
     "contao": {
-      "sources":{
+      "sources": {
         "module": "system/modules/language-editor"
       },
       "runonce": [
         "runonce/create-locallang.php"
       ]
     }
+  },
+  "autoload": {
+    "psr-4": {
+      "Netzmacht\\Contao\\LanguageEditor\\": "src/"
+    }
+  },
+  "support": {
+    "email": "mail@netzmacht.de",
+    "issues": "https://github.com/netzmacht/contao-language-editor/issues",
+    "source": "https://github.com/netzmacht/contao-language-editor"
   }
 }
