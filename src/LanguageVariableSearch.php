@@ -13,6 +13,8 @@
 
 namespace Netzmacht\Contao\LanguageEditor;
 
+use Contao\CoreBundle\Config\ResourceFinder;
+use Contao\System;
 use File;
 
 /**
@@ -226,25 +228,19 @@ class LanguageVariableSearch
         $translations = array();
 
         // walk over modules and find translations
-        $modules = \Config::getInstance()->getActiveModules();
-        foreach ($modules as $module) {
-            $path = TL_ROOT . '/system/modules/' . $module . '/languages';
-            if (is_dir($path)) {
-                $flags = (\FilesystemIterator::UNIX_PATHS | \FilesystemIterator::SKIP_DOTS);
-                $files = new \RecursiveIteratorIterator(
-                    new \RecursiveDirectoryIterator(str_replace('\\', '/', $path), $flags)
-                );
+        /** @var ResourceFinder $finder */
+        $finder = System::getContainer()->get('contao.resource_finder');
+        $paths  = $finder->findIn('languages/')->files()->name('/\.(php|xlf)$/');
 
-                foreach ($files as $file) {
-                    if (preg_match('#/languages/\w\w/([^/]+)\.(php|xlf)#', $file->getPathname(), $match)
-                        && !in_array($match[1], array('countries', 'default', 'explain', 'languages', 'modules'))
-                        && !in_array($match[1], $translations)
-                    ) {
-                        $translations[] = $match[1];
-                    }
-                }
+        foreach ($paths as $file) {
+            if (preg_match('#/languages/\w\w/([^/]+)\.(php|xlf)#', $file->getPathname(), $match)
+                && !in_array($match[1], array('countries', 'default', 'explain', 'languages', 'modules'))
+                && !in_array($match[1], $translations)
+            ) {
+                $translations[] = $match[1];
             }
         }
+
         sort($translations);
 
         // add defaults
