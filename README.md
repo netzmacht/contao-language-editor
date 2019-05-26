@@ -8,7 +8,7 @@ Language variable editor
 [![Contao Community Alliance coding standard](http://img.shields.io/badge/cca-coding_standard-red.svg?style=flat-square)](https://github.com/contao-community-alliance/coding-standard)
 
 
-This editor allow modification of languages variables from the Contao backend.
+This editor allows modification of languages variables from the Contao backend.
 
 The language variable editor was developed by [Tristan Lins](https://github.com/bit3archive/contao-language-editor). 
 This fork continues the development for Contao 3.2+.
