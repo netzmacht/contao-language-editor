@@ -1,7 +1,7 @@
 {
   "name": "netzmacht/contao-language-editor",
   "type": "contao-module",
-  "description": "Contao langauge editor",
+  "description": "Contao language editor",
   "keywords": [
     "contao",
     "language editor",
